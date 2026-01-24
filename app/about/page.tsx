@@ -154,7 +154,7 @@ export default function AboutPage() {
                   renowned catwalk instructor with 15 years of experience in the
                   modeling industry. As the CEO of LAW Models Academy, he has
                   produced successful models who have graced the runways of the
-                  world's most prestigious fashion houses.
+                  world&apos;s most prestigious fashion houses.
                 </p>
                 <p>
                   After completing his education, Larry Walker began his modeling
@@ -199,15 +199,15 @@ export default function AboutPage() {
               </h3>
               <div className="w-20 h-px bg-luxury-white/30 mb-8" />
               <p className="text-base md:text-lg text-luxury-white/70 leading-relaxed thin-text font-light mb-6">
-                Larry Walker's reputation for expertise, professionalism, and genuine
+                Larry Walker&apos;s reputation for expertise, professionalism, and genuine
                 care for his students made him the exclusive catwalk instructor and
-                scout for ISIS Models Africa—the continent's premier modeling agency.
+                scout for ISIS Models Africa—the continent&apos;s premier modeling agency.
                 This partnership, spanning over 9 years and counting, has changed the
                 lives of countless youths across Africa.
               </p>
               <p className="text-base md:text-lg text-luxury-white/70 leading-relaxed thin-text font-light">
-                He serves as the official catwalk instructor for ISIS Models' premier
-                fashion events, including Africa's Next Super Model, Nigeria's Next
+                He serves as the official catwalk instructor for ISIS Models&apos; premier
+                fashion events, including Africa&apos;s Next Super Model, Nigeria&apos;s Next
                 Super Model, and Africa International Fashion Week.
               </p>
             </motion.div>
@@ -229,7 +229,7 @@ export default function AboutPage() {
               <p className="text-base md:text-lg text-luxury-white/70 leading-relaxed thin-text font-light mb-6">
                 Through LAW Models Academy, Larry Walker has created a platform that
                 transforms aspiring models into industry professionals. His graduates
-                have walked for the world's most prestigious fashion houses, proving
+                have walked for the world&apos;s most prestigious fashion houses, proving
                 that with the right guidance, dedication, and training, dreams can
                 become reality.
               </p>
