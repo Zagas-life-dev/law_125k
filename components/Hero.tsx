@@ -96,12 +96,14 @@ export default function Hero() {
             >
               <div className="max-w-md">
                 <p className="text-lg md:text-xl text-luxury-white/70 leading-relaxed mb-6 thin-text font-light">
-                  Where excellence meets elegance. Shaping the future of fashion since 2012.
+                  LAW Models Academy is a high-fashion training institution founded
+                  by Larry Walker Ologbosere (CEO). We develop elite talent for
+                  Africa’s premier runways and global fashion houses.
                 </p>
                 <div className="flex items-center gap-4">
                   <div className="w-16 h-px bg-luxury-white/40" />
                   <span className="text-xs text-luxury-white/50 tracking-[0.2em] uppercase ultra-thin-text">
-                    Nigeria
+                    Nigeria · Africa · Global
                   </span>
                 </div>
               </div>

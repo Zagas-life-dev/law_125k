@@ -117,7 +117,7 @@ export default function Gallery() {
               <motion.div
                 key={image.id}
                 variants={itemVariants}
-                className={`group relative overflow-hidden bg-luxury-black cursor-pointer ${
+                className={`group relative overflow-hidden  cursor-pointer ${
                   index === 0 || index === 4 ? 'md:row-span-2' : ''
                 }`}
                 onClick={() => setSelectedImage(image.id)}
@@ -131,7 +131,7 @@ export default function Gallery() {
                   <motion.img
                     src={image.src}
                     alt={image.alt}
-                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000"
+                    className="block w-full h-full object-cover object-center grayscale group-hover:grayscale-0 transition-all duration-1000"
                     whileHover={{ scale: 1.15 }}
                     transition={{ duration: 0.8 }}
                   />
@@ -176,13 +176,13 @@ export default function Gallery() {
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.8, opacity: 0 }}
-              className="relative max-w-6xl max-h-[90vh]"
+              className="relative w-[90vw] h-[90vh] max-w-6xl"
               onClick={(e) => e.stopPropagation()}
             >
               <img
                 src={galleryImages.find(img => img.id === selectedImage)?.src}
                 alt="Gallery"
-                className="w-full h-full object-contain"
+                className="block w-full h-full object-contain"
               />
               <button
                 onClick={() => setSelectedImage(null)}

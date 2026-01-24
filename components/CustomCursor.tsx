@@ -1,48 +1,69 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { motion, useMotionValue, useSpring } from 'framer-motion'
+import { useEffect, useRef, useState } from 'react'
+import { motion, useMotionValue } from 'framer-motion'
 
 export default function CustomCursor() {
   const [isHovering, setIsHovering] = useState(false)
   const [isClicking, setIsClicking] = useState(false)
   const cursorX = useMotionValue(-100)
   const cursorY = useMotionValue(-100)
-  const springConfig = { damping: 25, stiffness: 700 }
-  const cursorXSpring = useSpring(cursorX, springConfig)
-  const cursorYSpring = useSpring(cursorY, springConfig)
+  const frameRef = useRef<number | null>(null)
+  const latestPos = useRef({ x: -100, y: -100 })
+  const hoveringRef = useRef(false)
 
   useEffect(() => {
-    const moveCursor = (e: MouseEvent) => {
-      cursorX.set(e.clientX - 16)
-      cursorY.set(e.clientY - 16)
+    const updateCursor = () => {
+      cursorX.set(latestPos.current.x)
+      cursorY.set(latestPos.current.y)
+      frameRef.current = null
+    }
+
+    const moveCursor = (e: PointerEvent) => {
+      latestPos.current = { x: e.clientX - 16, y: e.clientY - 16 }
+      if (frameRef.current === null) {
+        frameRef.current = window.requestAnimationFrame(updateCursor)
+      }
     }
 
     const handleMouseDown = () => setIsClicking(true)
     const handleMouseUp = () => setIsClicking(false)
 
-    // Add hover detection for interactive elements
-    const handleMouseEnter = () => setIsHovering(true)
-    const handleMouseLeave = () => setIsHovering(false)
+    const isInteractive = (target: EventTarget | null) =>
+      target instanceof Element && !!target.closest('a, button, [role="button"]')
 
-    const interactiveElements = document.querySelectorAll('a, button, [role="button"]')
-    interactiveElements.forEach((el) => {
-      el.addEventListener('mouseenter', handleMouseEnter)
-      el.addEventListener('mouseleave', handleMouseLeave)
-    })
+    const handlePointerOver = (e: PointerEvent) => {
+      const hovering = isInteractive(e.target)
+      if (hovering !== hoveringRef.current) {
+        hoveringRef.current = hovering
+        setIsHovering(hovering)
+      }
+    }
 
-    window.addEventListener('mousemove', moveCursor)
-    window.addEventListener('mousedown', handleMouseDown)
-    window.addEventListener('mouseup', handleMouseUp)
+    const handlePointerOut = (e: PointerEvent) => {
+      if (!isInteractive(e.target)) return
+      const stillHovering = isInteractive(e.relatedTarget)
+      if (!stillHovering && hoveringRef.current) {
+        hoveringRef.current = false
+        setIsHovering(false)
+      }
+    }
+
+    window.addEventListener('pointermove', moveCursor, { passive: true })
+    window.addEventListener('pointerdown', handleMouseDown)
+    window.addEventListener('pointerup', handleMouseUp)
+    document.addEventListener('pointerover', handlePointerOver)
+    document.addEventListener('pointerout', handlePointerOut)
 
     return () => {
-      window.removeEventListener('mousemove', moveCursor)
-      window.removeEventListener('mousedown', handleMouseDown)
-      window.removeEventListener('mouseup', handleMouseUp)
-      interactiveElements.forEach((el) => {
-        el.removeEventListener('mouseenter', handleMouseEnter)
-        el.removeEventListener('mouseleave', handleMouseLeave)
-      })
+      window.removeEventListener('pointermove', moveCursor)
+      window.removeEventListener('pointerdown', handleMouseDown)
+      window.removeEventListener('pointerup', handleMouseUp)
+      document.removeEventListener('pointerover', handlePointerOver)
+      document.removeEventListener('pointerout', handlePointerOut)
+      if (frameRef.current !== null) {
+        window.cancelAnimationFrame(frameRef.current)
+      }
     }
   }, [cursorX, cursorY])
 
@@ -52,8 +73,8 @@ export default function CustomCursor() {
       <motion.div
         className="fixed top-0 left-0 w-8 h-8 pointer-events-none z-[9999] mix-blend-difference"
         style={{
-          x: cursorXSpring,
-          y: cursorYSpring,
+          x: cursorX,
+          y: cursorY,
         }}
       >
         <motion.div
@@ -70,8 +91,8 @@ export default function CustomCursor() {
       <motion.div
         className="fixed top-0 left-0 w-16 h-16 pointer-events-none z-[9998]"
         style={{
-          x: cursorXSpring,
-          y: cursorYSpring,
+          x: cursorX,
+          y: cursorY,
         }}
       >
         <motion.div
@@ -88,8 +109,8 @@ export default function CustomCursor() {
       <motion.div
         className="fixed top-0 left-0 w-2 h-2 pointer-events-none z-[9997]"
         style={{
-          x: cursorXSpring,
-          y: cursorYSpring,
+          x: cursorX,
+          y: cursorY,
         }}
       >
         <motion.div

@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion'
+import Link from 'next/link'
 
 export default function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -20,11 +21,11 @@ export default function Navigation() {
   })
 
   const navItems = [
-    { name: 'Home', href: '#hero', number: '01' },
-    { name: 'About', href: '#about', number: '02' },
-    { name: 'Programs', href: '#courses', number: '03' },
-    { name: 'Portfolio', href: '#gallery', number: '04' },
-    { name: 'Enrol', href: '#cta', number: '05' },
+    { name: 'Home', href: '/', number: '01' },
+    { name: 'About', href: '/about', number: '02' },
+    { name: 'Syllabus', href: '/syllabus', number: '03' },
+    { name: 'Apply', href: '/apply', number: '04' },
+    { name: 'Portfolio', href: '/#gallery', number: '05' },
   ]
 
   return (
@@ -43,13 +44,14 @@ export default function Navigation() {
       >
         <div className="max-w-7xl mx-auto px-6 lg:px-16">
           <div className="flex items-center justify-between">
-            <motion.a
-              href="#hero"
-              className="editorial-text text-2xl font-bold text-luxury-white"
-              whileHover={{ scale: 1.1 }}
-            >
-              LAW
-            </motion.a>
+            <Link href="/">
+              <motion.div
+                className="editorial-text text-2xl font-bold text-luxury-white"
+                whileHover={{ scale: 1.1 }}
+              >
+                LAW
+              </motion.div>
+            </Link>
 
             <button
               onClick={() => setIsMenuOpen(true)}
@@ -83,24 +85,27 @@ export default function Navigation() {
               <div className="w-full max-w-6xl px-6 lg:px-16">
                 <nav className="space-y-4">
                   {navItems.map((item, index) => (
-                    <motion.a
+                    <Link
                       key={item.name}
                       href={item.href}
                       onClick={() => setIsMenuOpen(false)}
-                      initial={{ opacity: 0, x: -50 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                      className="group block"
                     >
-                      <div className="flex items-center gap-8 py-4 border-b border-luxury-white/10 group-hover:border-luxury-white/30 transition-colors">
-                        <span className="text-sm text-luxury-white/40 tracking-widest font-mono w-12">
-                          {item.number}
-                        </span>
-                        <span className="editorial-text text-4xl md:text-6xl lg:text-8xl font-bold text-luxury-white group-hover:text-luxury-white/70 transition-colors">
-                          {item.name}
-                        </span>
-                      </div>
-                    </motion.a>
+                      <motion.div
+                        initial={{ opacity: 0, x: -50 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                        className="group block"
+                      >
+                        <div className="flex items-center gap-8 py-4 border-b border-luxury-white/10 group-hover:border-luxury-white/30 transition-colors">
+                          <span className="text-sm text-luxury-white/40 tracking-widest font-mono w-12">
+                            {item.number}
+                          </span>
+                          <span className="editorial-text text-4xl md:text-6xl lg:text-8xl font-bold text-luxury-white group-hover:text-luxury-white/70 transition-colors">
+                            {item.name}
+                          </span>
+                        </div>
+                      </motion.div>
+                    </Link>
                   ))}
                 </nav>
 

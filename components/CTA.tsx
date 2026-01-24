@@ -57,13 +57,11 @@ export default function CTA() {
           transition={{ duration: 0.8 }}
           className="mb-12"
         >
-          <span className="text-xs text-luxury-white/50 tracking-[0.2em] uppercase ultra-thin-text mb-6 block">
-            Enrolment
-          </span>
+    
           <h2 className="editorial-text text-6xl md:text-7xl lg:text-8xl font-bold text-luxury-white mb-8 leading-tight">
-            Begin Your
+            Apply to
             <br />
-            Journey
+            The Academy
           </h2>
           <div className="w-24 h-px bg-luxury-white/30 mx-auto mb-12" />
         </motion.div>
@@ -74,8 +72,8 @@ export default function CTA() {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="text-lg md:text-xl lg:text-2xl text-luxury-white/70 mb-16 leading-relaxed max-w-3xl mx-auto thin-text font-light"
         >
-          Join the ranks of elite models who have shaped the fashion industry.
-          Your transformation starts here.
+          Submit your measurements and polaroids for review by the LAW Models
+          Academy admissions team and begin your professional journey.
         </motion.p>
 
         <motion.div
@@ -85,12 +83,12 @@ export default function CTA() {
           className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-20"
         >
           <motion.a
-            href="#contact"
+            href="/apply"
             className="group relative px-16 py-6 bg-luxury-white text-luxury-black tracking-[0.15em] uppercase text-sm font-medium overflow-hidden"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <span className="relative z-10">Enrol Now</span>
+            <span className="relative z-10">Apply Now</span>
             <motion.div
               className="absolute inset-0 bg-luxury-black"
               initial={{ x: '-100%' }}
@@ -98,16 +96,16 @@ export default function CTA() {
               transition={{ duration: 0.4 }}
             />
             <span className="absolute inset-0 flex items-center justify-center text-luxury-white z-10 opacity-0 group-hover:opacity-100 transition-opacity">
-              Enrol Now
+              Apply Now
             </span>
           </motion.a>
           <motion.a
-            href="#courses"
+            href="/syllabus"
             className="group relative px-16 py-6 border-2 border-luxury-white text-luxury-white tracking-[0.15em] uppercase text-sm font-medium overflow-hidden"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <span className="relative z-10">Learn More</span>
+            <span className="relative z-10">View Syllabus</span>
             <motion.div
               className="absolute inset-0 bg-luxury-white"
               initial={{ x: '-100%' }}
@@ -115,7 +113,7 @@ export default function CTA() {
               transition={{ duration: 0.4 }}
             />
             <span className="absolute inset-0 flex items-center justify-center text-luxury-black z-10 opacity-0 group-hover:opacity-100 transition-opacity">
-              Learn More
+              View Syllabus
             </span>
           </motion.a>
         </motion.div>
@@ -133,10 +131,10 @@ export default function CTA() {
                 Email
               </p>
               <a
-                href="mailto:enrol@lawmodelacademy.com"
+                href="mailto:larrywalker@healandfeed.org"
                 className="text-sm text-luxury-white hover:text-luxury-white/70 transition-colors"
               >
-                enrol@lawmodelacademy.com
+                larrywalker@healandfeed.org
               </a>
             </div>
             <div>
@@ -144,10 +142,10 @@ export default function CTA() {
                 Phone
               </p>
               <a
-                href="tel:+15551234567"
+                href="tel:+2348124128223"
                 className="text-sm text-luxury-white hover:text-luxury-white/70 transition-colors"
               >
-                +1 (555) 123-4567
+                +234 812 412 8223
               </a>
             </div>
             <div>
@@ -155,7 +153,7 @@ export default function CTA() {
                 Location
               </p>
               <p className="text-sm text-luxury-white">
-                Lagos, Nigeria
+                Nigeria
               </p>
             </div>
           </div>

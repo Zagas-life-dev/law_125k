@@ -37,8 +37,8 @@ export default function About() {
             <div className="aspect-[4/5] relative overflow-hidden bg-luxury-black">
               <motion.img
                 src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1200&h=1500&fit=crop"
-                alt="About"
-                className="w-full h-full object-cover grayscale"
+                alt="Larry Walker instructing"
+                className="w-full h-full object-cover object-center grayscale"
                 initial={{ scale: 1.2 }}
                 animate={inView ? { scale: 1 } : {}}
                 transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
@@ -63,10 +63,10 @@ export default function About() {
               transition={{ duration: 0.8, delay: 0.2 }}
             >
               <span className="text-xs text-luxury-black/40 tracking-[0.2em] uppercase ultra-thin-text mb-6 block">
-                About
+                The Academy
               </span>
               <h2 className="editorial-text text-6xl md:text-7xl lg:text-8xl font-bold text-luxury-black mb-8 leading-tight">
-                The
+                LAW Models
                 <br />
                 Academy
               </h2>
@@ -80,14 +80,15 @@ export default function About() {
               className="space-y-6 text-base md:text-lg text-luxury-black/70 leading-relaxed thin-text font-light"
             >
               <p>
-                Larry Walker Model Academy stands as a beacon of excellence in the
-                fashion industry, cultivating the next generation of models with
-                uncompromising standards and artistic vision.
+                LAW Models Academy is a luxury training institution led by founder
+                and CEO Larry Walker Ologbosere. The academy produces runway-ready
+                professionals for top fashion brands including Gucci, Alexander
+                McQueen, and Prada.
               </p>
               <p>
-                Our curriculum combines traditional modeling fundamentals with
-                contemporary industry insights, ensuring our graduates are
-                well-equipped for the global fashion stage.
+                As the official catwalk instructor for ISIS Models Africa events,
+                the academy’s curriculum bridges craft and industry access—from
+                Africa’s Next Super Model to Africa International Fashion Week.
               </p>
             </motion.div>
 
@@ -96,15 +97,19 @@ export default function About() {
               initial={{ opacity: 0, y: 30 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.8, delay: 0.6 }}
-              className="mt-12 grid grid-cols-2 gap-8"
+              className="mt-12 grid grid-cols-2 md:grid-cols-3 gap-8"
             >
               <div>
-                <div className="text-5xl font-bold text-luxury-black mb-2">13+</div>
-                <div className="text-sm text-luxury-black/60 tracking-wider uppercase">Years</div>
+                <div className="text-5xl font-bold text-luxury-black mb-2">15+</div>
+                <div className="text-sm text-luxury-black/60 tracking-wider uppercase">Years Experience</div>
               </div>
               <div>
-                <div className="text-5xl font-bold text-luxury-black mb-2">500+</div>
-                <div className="text-sm text-luxury-black/60 tracking-wider uppercase">Graduates</div>
+                <div className="text-5xl font-bold text-luxury-black mb-2">9</div>
+                <div className="text-sm text-luxury-black/60 tracking-wider uppercase">Years with ISIS</div>
+              </div>
+              <div>
+                <div className="text-5xl font-bold text-luxury-black mb-2">30+</div>
+                <div className="text-sm text-luxury-black/60 tracking-wider uppercase">Fashion Weeks</div>
               </div>
             </motion.div>
           </motion.div>
