@@ -23,9 +23,10 @@ export default function Navigation() {
   const navItems = [
     { name: 'Home', href: '/', number: '01' },
     { name: 'About', href: '/about', number: '02' },
-    { name: 'Syllabus', href: '/syllabus', number: '03' },
-    { name: 'Apply', href: '/apply', number: '04' },
-    { name: 'Portfolio', href: '/#gallery', number: '05' },
+    // { name: 'Syllabus', href: '/syllabus', number: '03' },
+    { name: 'Courses', href: '/courses', number: '03' },
+    { name: 'Gallery', href: '/gallery', number: '04' },
+    { name: 'Apply', href: '/apply', number: '05' },
   ]
 
   return (

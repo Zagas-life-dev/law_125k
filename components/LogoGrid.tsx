@@ -4,9 +4,14 @@ import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 
 const brands = [
+  { name: 'Chanel', logo: 'CHANEL' },
   { name: 'Gucci', logo: 'GUCCI' },
-  { name: 'Alexander McQueen', logo: 'ALEXANDER MCQUEEN' },
   { name: 'Prada', logo: 'PRADA' },
+  { name: 'YSL Saint Laurent', logo: 'YSL SAINT LAURENT' },
+  { name: 'Fendi', logo: 'FENDI' },
+  { name: 'Dior', logo: 'DIOR' },
+  { name: 'Dsquared2', logo: 'DSQUARED2' },
+  { name: 'Alexander McQueen', logo: 'ALEXANDER MCQUEEN' },
 ]
 
 export default function LogoGrid() {

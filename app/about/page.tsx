@@ -46,7 +46,7 @@ export default function AboutPage() {
             </h1>
             <div className="w-20 h-px bg-luxury-white/30 mx-auto mb-8" />
             <p className="text-lg md:text-xl text-luxury-white/70 max-w-2xl mx-auto leading-relaxed thin-text font-light">
-              Exclusive Catwalk Instructor & CEO, LAW Models Academy
+              Official Scout & Catwalk Instructor, ISIS Models Africa
             </p>
           </motion.div>
         </div>
@@ -57,9 +57,9 @@ export default function AboutPage() {
         <div className="container mx-auto px-6 lg:px-16">
           <div className="grid md:grid-cols-3 gap-16 lg:gap-24">
             {[
-              { number: '15+', label: 'Years Experience', sublabel: 'Industry Mastery' },
-              { number: '9', label: 'Years with ISIS Models', sublabel: 'Exclusive Partnership' },
-              { number: '30+', label: 'Global Fashion Weeks', sublabel: 'International Presence' },
+              { number: '18', label: 'Years Experience', sublabel: 'Industry Mastery' },
+              { number: '10', label: 'Years with ISIS Models', sublabel: 'Official Partnership' },
+              { number: '2012', label: 'Academy Established', sublabel: 'November 10' },
             ].map((stat, index) => (
               <motion.div
                 key={stat.label}
@@ -157,6 +157,11 @@ export default function AboutPage() {
                   world&apos;s most prestigious fashion houses.
                 </p>
                 <p>
+                  The academy was established on November 10, 2012, to cultivate
+                  elite runway talent across Africa and prepare models for global
+                  fashion platforms.
+                </p>
+                <p>
                   After completing his education, Larry Walker began his modeling
                   career, quickly catching the attention of industry experts with his
                   poise, elegance, and natural talent. His ability to effortlessly
@@ -200,10 +205,10 @@ export default function AboutPage() {
               <div className="w-20 h-px bg-luxury-white/30 mb-8" />
               <p className="text-base md:text-lg text-luxury-white/70 leading-relaxed thin-text font-light mb-6">
                 Larry Walker&apos;s reputation for expertise, professionalism, and genuine
-                care for his students made him the exclusive catwalk instructor and
-                scout for ISIS Models Africa—the continent&apos;s premier modeling agency.
-                This partnership, spanning over 9 years and counting, has changed the
-                lives of countless youths across Africa.
+                care for his students made him the official scout and catwalk
+                instructor for ISIS Models Africa—the continent&apos;s premier modeling
+                agency. This partnership, spanning over 10 years and counting, has
+                changed the lives of countless youths across Africa.
               </p>
               <p className="text-base md:text-lg text-luxury-white/70 leading-relaxed thin-text font-light">
                 He serves as the official catwalk instructor for ISIS Models&apos; premier
@@ -243,11 +248,8 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Geography Map */}
-      <GeographyMap />
-
       {/* Contact Section */}
-      <section className="relative bg-luxury-white overflow-hidden py-32">
+      <section id="contact" className="relative bg-luxury-white overflow-hidden py-32">
         <div className="container mx-auto px-6 lg:px-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -263,21 +265,79 @@ export default function AboutPage() {
               Get In Touch
             </h3>
             <div className="w-20 h-px bg-luxury-black/30 mx-auto mb-12" />
-            <div className="space-y-6 text-base md:text-lg text-luxury-black/70 leading-relaxed thin-text font-light">
-              <p>
-                <a href="tel:+2348124128223" className="hover:text-luxury-black transition-colors border-b border-luxury-black/20 hover:border-luxury-black/60">
-                  +234 812 412 8223
+            <p className="text-base text-luxury-black/70 mb-10 thin-text font-light">
+              We have two branches: one in Lagos and one in Abuja. Click either branch to open its location in Google Maps.
+            </p>
+            <div className="space-y-10 text-base md:text-lg text-luxury-black/70 leading-relaxed thin-text font-light">
+              <div className="space-y-3">
+                <a
+                  href="https://www.google.com/maps/search/?api=1&query=MTF%206%2C%20Paradise%20Estate%20Phase%202%20Lifecamp%2C%20Abuja%2C%20Nigeria"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="block text-xs tracking-[0.2em] uppercase text-luxury-black/50 hover:text-luxury-black ultra-thin-text border-b border-transparent hover:border-luxury-black/40 transition-colors"
+                >
+                  Abuja Branch →
                 </a>
-              </p>
-              <p>
-                <a href="mailto:larrywalker@healandfeed.org" className="hover:text-luxury-black transition-colors border-b border-luxury-black/20 hover:border-luxury-black/60">
+                <a
+                  href="https://www.google.com/maps/search/?api=1&query=MTF%206%2C%20Paradise%20Estate%20Phase%202%20Lifecamp%2C%20Abuja%2C%20Nigeria"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-block hover:text-luxury-black transition-colors border-b border-luxury-black/20 hover:border-luxury-black/60"
+                >
+                  MTF 6, Paradise Estate Phase 2 Lifecamp
+                </a>
+                <p className="text-xs tracking-[0.2em] uppercase text-luxury-black/40 ultra-thin-text">
+                  Abuja Manager
+                </p>
+                <a
+                  href="tel:09039321128"
+                  className="inline-block hover:text-luxury-black transition-colors border-b border-luxury-black/20 hover:border-luxury-black/60"
+                >
+                  09039321128
+                </a>
+              </div>
+              <div className="space-y-3">
+                <a
+                  href="https://www.google.com/maps/search/?api=1&query=2%20Otunubi%20Street%20Ogba%20Ifako%20Road%20Lagos%2C%20Nigeria"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="block text-xs tracking-[0.2em] uppercase text-luxury-black/50 hover:text-luxury-black ultra-thin-text border-b border-transparent hover:border-luxury-black/40 transition-colors"
+                >
+                  Lagos Branch →
+                </a>
+                <a
+                  href="https://www.google.com/maps/search/?api=1&query=2%20Otunubi%20Street%20Ogba%20Ifako%20Road%20Lagos%2C%20Nigeria"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-block hover:text-luxury-black transition-colors border-b border-luxury-black/20 hover:border-luxury-black/60"
+                >
+                  2 Otunubi Street Ogba Ifako Road Lagos
+                </a>
+                <a
+                  href="tel:+254726960969"
+                  className="inline-block hover:text-luxury-black transition-colors border-b border-luxury-black/20 hover:border-luxury-black/60"
+                >
+                  +254 726 960969
+                </a>
+              </div>
+              <div className="space-y-3">
+                <p className="text-xs tracking-[0.2em] uppercase text-luxury-black/50 ultra-thin-text">
+                  Email
+                </p>
+                <a
+                  href="mailto:larrywalker@healandfeed.org"
+                  className="inline-block hover:text-luxury-black transition-colors border-b border-luxury-black/20 hover:border-luxury-black/60"
+                >
                   larrywalker@healandfeed.org
                 </a>
-              </p>
+              </div>
             </div>
           </motion.div>
         </div>
       </section>
+
+      {/* Geography Map */}
+      <GeographyMap />
 
       <Footer />
     </main>

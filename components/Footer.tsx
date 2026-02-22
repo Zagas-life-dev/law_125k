@@ -32,10 +32,16 @@ export default function Footer() {
               elegance, and uncompromising standards since 2012.
             </p>
             <div className="flex items-center space-x-6">
-              {['Instagram', 'Twitter', 'LinkedIn'].map((social, index) => (
+              {[
+                { name: 'Instagram', href: 'https://www.instagram.com/law_models_africa/' },
+                { name: 'Twitter', href: '#' },
+                { name: 'TikTok', href: '#' },
+              ].map((social, index) => (
                 <motion.a
-                  key={social}
-                  href="#"
+                  key={social.name}
+                  href={social.href}
+                  target={social.href.startsWith('http') ? '_blank' : undefined}
+                  rel={social.href.startsWith('http') ? 'noreferrer' : undefined}
                   className="text-xs text-luxury-white/50 hover:text-luxury-white tracking-[0.15em] uppercase transition-colors duration-300 ultra-thin-text"
                   whileHover={{ y: -2 }}
                   initial={{ opacity: 0 }}
@@ -43,7 +49,7 @@ export default function Footer() {
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1 }}
                 >
-                  {social}
+                  {social.name}
                 </motion.a>
               ))}
             </div>
@@ -61,10 +67,12 @@ export default function Footer() {
             </h4>
             <ul className="space-y-4">
               {[
-                { name: 'About', href: '#about' },
-                { name: 'Courses', href: '#courses' },
-                { name: 'Gallery', href: '#gallery' },
-                { name: 'Enrol', href: '#cta' },
+                { name: 'Home', href: '/' },
+                { name: 'About', href: '/about' },
+                // { name: 'Syllabus', href: '/syllabus' },
+                { name: 'Courses', href: '/courses' },
+                { name: 'Gallery', href: '/gallery' },
+                { name: 'Apply', href: '/apply' },
               ].map((link, index) => (
                 <li key={link.name}>
                   <motion.a
@@ -94,27 +102,68 @@ export default function Footer() {
             <h4 className="text-xs tracking-[0.2em] uppercase mb-6 text-luxury-white/40 ultra-thin-text">
               Contact
             </h4>
+            <p className="text-xs text-luxury-white/50 mb-4 thin-text">
+              Two branches: Lagos & Abuja. Click to open in Google Maps.
+            </p>
             <ul className="space-y-4">
               <li>
                 <a
-                  href="mailto:enrol@lawmodelacademy.com"
+                  href="mailto:larrywalker@healandfeed.org"
                   className="text-sm text-luxury-white/70 hover:text-luxury-white transition-colors duration-300"
                 >
-                  enrol@lawmodelacademy.com
+                  larrywalker@healandfeed.org
                 </a>
               </li>
               <li>
                 <a
-                  href="tel:+15551234567"
+                  href="https://www.google.com/maps/search/?api=1&query=MTF%206%2C%20Paradise%20Estate%20Phase%202%20Lifecamp%2C%20Abuja%2C%20Nigeria"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-xs tracking-[0.2em] uppercase text-luxury-white/40 hover:text-luxury-white ultra-thin-text mb-2 block transition-colors duration-300"
+                >
+                  Abuja Branch →
+                </a>
+                <a
+                  href="https://www.google.com/maps/search/?api=1&query=MTF%206%2C%20Paradise%20Estate%20Phase%202%20Lifecamp%2C%20Abuja%2C%20Nigeria"
+                  target="_blank"
+                  rel="noreferrer"
                   className="text-sm text-luxury-white/70 hover:text-luxury-white transition-colors duration-300"
                 >
-                  +1 (555) 123-4567
+                  MTF 6, Paradise Estate Phase 2 Lifecamp
+                </a>
+                <p className="text-xs text-luxury-white/40 uppercase tracking-[0.12em] ultra-thin-text mt-2">
+                  Abuja Manager
+                </p>
+                <a
+                  href="tel:09039321128"
+                  className="text-sm text-luxury-white/70 hover:text-luxury-white transition-colors duration-300 block mt-1"
+                >
+                  09039321128
                 </a>
               </li>
               <li>
-                <p className="text-sm text-luxury-white/70">
-                  Lagos, Nigeria
-                </p>
+                <a
+                  href="https://www.google.com/maps/search/?api=1&query=2%20Otunubi%20Street%20Ogba%20Ifako%20Road%20Lagos%2C%20Nigeria"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-xs tracking-[0.2em] uppercase text-luxury-white/40 hover:text-luxury-white ultra-thin-text mb-2 block transition-colors duration-300"
+                >
+                  Lagos Branch →
+                </a>
+                <a
+                  href="https://www.google.com/maps/search/?api=1&query=2%20Otunubi%20Street%20Ogba%20Ifako%20Road%20Lagos%2C%20Nigeria"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-sm text-luxury-white/70 hover:text-luxury-white transition-colors duration-300"
+                >
+                  2 Otunubi Street Ogba Ifako Road Lagos
+                </a>
+                <a
+                  href="tel:+254726960969"
+                  className="text-sm text-luxury-white/70 hover:text-luxury-white transition-colors duration-300 block mt-1"
+                >
+                  +254 726 960969
+                </a>
               </li>
             </ul>
           </motion.div>

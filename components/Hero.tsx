@@ -1,10 +1,13 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useRef } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 
+const CLOUDINARY_VIDEO_ID =
+  'SaveClip.App_AQM58ExhilfQ-s085PulJbMcmddWMipTr3Hhw_OfnMsnCSfd1HAoZcLre3U_YBzswPoV12rIBuxK6ZXCuMYdWs4i_ri2w56_a0c156'
+const CLOUDINARY_VIDEO_URL = `https://res.cloudinary.com/ddnlbizum/video/upload/${CLOUDINARY_VIDEO_ID}`
+
 export default function Hero() {
-  const videoRef = useRef<HTMLVideoElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
   const { scrollYProgress } = useScroll({
@@ -12,15 +15,9 @@ export default function Hero() {
     offset: ['start start', 'end start'],
   })
 
-  const videoScale = useTransform(scrollYProgress, [0, 1], [1, 1.3])
+  const videoScale = useTransform(scrollYProgress, [0, 1], [1.15, 1.45])
   const videoOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0])
   const textY = useTransform(scrollYProgress, [0, 1], [0, -200])
-
-  useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.playbackRate = 0.5
-    }
-  }, [])
 
   return (
     <section
@@ -28,25 +25,25 @@ export default function Hero() {
       id="hero"
       className="relative h-screen w-full overflow-hidden"
     >
-      {/* Video Background */}
-      <motion.div 
+      {/* Video Background - Cloudinary direct URL, rotated to horizontal, cropped in */}
+      <motion.div
         className="absolute inset-0 z-0"
         style={{ scale: videoScale, opacity: videoOpacity }}
       >
-        <video
-          ref={videoRef}
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="w-full h-full object-cover"
+        <div
+          className="absolute left-1/2 top-1/2 w-[100vh] h-[100vw] -translate-x-1/2 -translate-y-1/2 -rotate-90"
+          style={{ maxWidth: 'none', maxHeight: 'none' }}
         >
-          <source
-            src="https://videos.pexels.com/video-files/3045163/3045163-hd_1920_1080_25fps.mp4"
-            type="video/mp4"
+          <video
+            src={CLOUDINARY_VIDEO_URL}
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-full h-full object-cover grayscale"
           />
-        </video>
-        <div className="absolute inset-0 bg-luxury-black/50" />
+        </div>
+        <div className="absolute inset-0 bg-luxury-black/50 pointer-events-none" />
       </motion.div>
 
       {/* Asymmetric Layout */}

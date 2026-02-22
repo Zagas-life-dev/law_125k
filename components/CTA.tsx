@@ -125,7 +125,61 @@ export default function CTA() {
           transition={{ duration: 0.8, delay: 0.6 }}
           className="glassmorphism-light p-8 lg:p-12 rounded-sm max-w-4xl mx-auto"
         >
+          <p className="text-sm text-luxury-white/70 mb-8 text-center thin-text">
+            We have two branches: one in Lagos and one in Abuja. Click a branch or address to open in Google Maps.
+          </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12 text-center md:text-left">
+            <div>
+              <a
+                href="https://www.google.com/maps/search/?api=1&query=MTF%206%2C%20Paradise%20Estate%20Phase%202%20Lifecamp%2C%20Abuja%2C%20Nigeria"
+                target="_blank"
+                rel="noreferrer"
+                className="text-xs tracking-[0.15em] uppercase mb-3 text-luxury-white/50 hover:text-luxury-white ultra-thin-text block transition-colors"
+              >
+                Abuja Branch →
+              </a>
+              <a
+                href="https://www.google.com/maps/search/?api=1&query=MTF%206%2C%20Paradise%20Estate%20Phase%202%20Lifecamp%2C%20Abuja%2C%20Nigeria"
+                target="_blank"
+                rel="noreferrer"
+                className="text-sm text-luxury-white/80 hover:text-luxury-white transition-colors"
+              >
+                MTF 6, Paradise Estate Phase 2 Lifecamp
+              </a>
+              <p className="text-xs text-luxury-white/50 mt-2 uppercase tracking-[0.12em] ultra-thin-text">
+                Abuja Manager
+              </p>
+              <a
+                href="tel:09039321128"
+                className="text-sm text-luxury-white hover:text-luxury-white/70 transition-colors block mt-2"
+              >
+                09039321128
+              </a>
+            </div>
+            <div>
+              <a
+                href="https://www.google.com/maps/search/?api=1&query=2%20Otunubi%20Street%20Ogba%20Ifako%20Road%20Lagos%2C%20Nigeria"
+                target="_blank"
+                rel="noreferrer"
+                className="text-xs tracking-[0.15em] uppercase mb-3 text-luxury-white/50 hover:text-luxury-white ultra-thin-text block transition-colors"
+              >
+                Lagos Branch →
+              </a>
+              <a
+                href="https://www.google.com/maps/search/?api=1&query=2%20Otunubi%20Street%20Ogba%20Ifako%20Road%20Lagos%2C%20Nigeria"
+                target="_blank"
+                rel="noreferrer"
+                className="text-sm text-luxury-white/80 hover:text-luxury-white transition-colors"
+              >
+                2 Otunubi Street Ogba Ifako Road Lagos
+              </a>
+              <a
+                href="tel:+254726960969"
+                className="text-sm text-luxury-white hover:text-luxury-white/70 transition-colors block mt-2"
+              >
+                +254 726 960969
+              </a>
+            </div>
             <div>
               <p className="text-xs tracking-[0.15em] uppercase mb-3 text-luxury-white/50 ultra-thin-text">
                 Email
@@ -136,25 +190,6 @@ export default function CTA() {
               >
                 larrywalker@healandfeed.org
               </a>
-            </div>
-            <div>
-              <p className="text-xs tracking-[0.15em] uppercase mb-3 text-luxury-white/50 ultra-thin-text">
-                Phone
-              </p>
-              <a
-                href="tel:+2348124128223"
-                className="text-sm text-luxury-white hover:text-luxury-white/70 transition-colors"
-              >
-                +234 812 412 8223
-              </a>
-            </div>
-            <div>
-              <p className="text-xs tracking-[0.15em] uppercase mb-3 text-luxury-white/50 ultra-thin-text">
-                Location
-              </p>
-              <p className="text-sm text-luxury-white">
-                Nigeria
-              </p>
             </div>
           </div>
         </motion.div>

@@ -34,14 +34,14 @@ export default function About() {
             style={{ y: imageY }}
             className="lg:col-span-7 relative"
           >
-            <div className="aspect-[4/5] relative overflow-hidden bg-luxury-black">
-              <motion.img
-                src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1200&h=1500&fit=crop"
-                alt="Larry Walker instructing"
-                className="w-full h-full object-cover object-center grayscale"
-                initial={{ scale: 1.2 }}
-                animate={inView ? { scale: 1 } : {}}
-                transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+            <div className="aspect-[4/5] relative overflow-hidden bg-luxury-black group">
+              <video
+                src="https://res.cloudinary.com/ddnlbizum/video/upload/v1771782827/SaveClip.App_AQMhoqdZqjI-MO0r3qXIH3ZtwrFRpTNh5eOUi9la3L41riSVmwdk9Eho3-Cu8Z04Msp768-XLIGK6JRF-Ts5Qk0e_brsgum_003760.mp4"
+                muted
+                loop
+                playsInline
+                autoPlay
+                className="w-full h-full object-cover object-center grayscale group-hover:grayscale-0 transition-[filter] duration-700 ease-out"
               />
               {/* Large Number Overlay */}
               <div className="absolute top-8 left-8">
@@ -86,9 +86,9 @@ export default function About() {
                 McQueen, and Prada.
               </p>
               <p>
-                As the official catwalk instructor for ISIS Models Africa events,
-                the academy’s curriculum bridges craft and industry access—from
-                Africa’s Next Super Model to Africa International Fashion Week.
+                As the official scout and catwalk instructor for ISIS Models Africa
+                events, the academy&apos;s curriculum bridges craft and industry access—from
+                Africa&apos;s Next Super Model to Africa International Fashion Week.
               </p>
             </motion.div>
 
@@ -100,16 +100,16 @@ export default function About() {
               className="mt-12 grid grid-cols-2 md:grid-cols-3 gap-8"
             >
               <div>
-                <div className="text-5xl font-bold text-luxury-black mb-2">15+</div>
+                <div className="text-5xl font-bold text-luxury-black mb-2">18</div>
                 <div className="text-sm text-luxury-black/60 tracking-wider uppercase">Years Experience</div>
               </div>
               <div>
-                <div className="text-5xl font-bold text-luxury-black mb-2">9</div>
+                <div className="text-5xl font-bold text-luxury-black mb-2">10</div>
                 <div className="text-sm text-luxury-black/60 tracking-wider uppercase">Years with ISIS</div>
               </div>
               <div>
-                <div className="text-5xl font-bold text-luxury-black mb-2">30+</div>
-                <div className="text-sm text-luxury-black/60 tracking-wider uppercase">Fashion Weeks</div>
+                <div className="text-5xl font-bold text-luxury-black mb-2">2012</div>
+                <div className="text-sm text-luxury-black/60 tracking-wider uppercase">Academy Established</div>
               </div>
             </motion.div>
           </motion.div>
