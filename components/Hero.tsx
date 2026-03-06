@@ -3,9 +3,8 @@
 import { useRef } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 
-const CLOUDINARY_VIDEO_ID =
-  'SaveClip.App_AQM58ExhilfQ-s085PulJbMcmddWMipTr3Hhw_OfnMsnCSfd1HAoZcLre3U_YBzswPoV12rIBuxK6ZXCuMYdWs4i_ri2w56_a0c156'
-const CLOUDINARY_VIDEO_URL = `https://res.cloudinary.com/ddnlbizum/video/upload/${CLOUDINARY_VIDEO_ID}`
+const CLOUDINARY_VIDEO_URL =
+  'https://res.cloudinary.com/ddnlbizum/video/upload/v1772467044/Untitled_design_2_hyrnxg.mp4'
 
 export default function Hero() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -25,24 +24,19 @@ export default function Hero() {
       id="hero"
       className="relative h-screen w-full overflow-hidden"
     >
-      {/* Video Background - Cloudinary direct URL, rotated to horizontal, cropped in */}
+      {/* Video Background - Cloudinary direct URL */}
       <motion.div
         className="absolute inset-0 z-0"
         style={{ scale: videoScale, opacity: videoOpacity }}
       >
-        <div
-          className="absolute left-1/2 top-1/2 w-[100vh] h-[100vw] -translate-x-1/2 -translate-y-1/2 -rotate-90"
-          style={{ maxWidth: 'none', maxHeight: 'none' }}
-        >
-          <video
-            src={CLOUDINARY_VIDEO_URL}
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="w-full h-full object-cover grayscale"
-          />
-        </div>
+        <video
+          src={CLOUDINARY_VIDEO_URL}
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="w-full h-full object-cover grayscale"
+        />
         <div className="absolute inset-0 bg-luxury-black/50 pointer-events-none" />
       </motion.div>
 

@@ -69,7 +69,7 @@ export default function Footer() {
               {[
                 { name: 'Home', href: '/' },
                 { name: 'About', href: '/about' },
-                // { name: 'Syllabus', href: '/syllabus' },
+                // { name: 'Syllabus', href: '/syllabus' }, 
                 { name: 'Courses', href: '/courses' },
                 { name: 'Gallery', href: '/gallery' },
                 { name: 'Apply', href: '/apply' },

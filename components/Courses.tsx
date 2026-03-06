@@ -9,12 +9,52 @@ const EDITORIAL_IMAGES = [
   'https://res.cloudinary.com/ddnlbizum/image/upload/v1771771028/SaveClip.App_610542066_18097662157893332_8979088537474099440_n_mscs8n.webp',
   'https://res.cloudinary.com/ddnlbizum/image/upload/v1771771027/SaveClip.App_609552397_18097662214893332_4789506225843562602_n_rlaeqb.webp',
   'https://res.cloudinary.com/ddnlbizum/image/upload/v1771771027/SaveClip.App_610702440_18097662223893332_6033236831334538591_n_la0iem.webp',
+  'https://res.cloudinary.com/ddnlbizum/image/upload/v1772738656/SnapInsta.to_642624091_18062292671673356_3725490651833664552_n_gqfwew.jpg',
   'https://res.cloudinary.com/ddnlbizum/image/upload/v1771771026/SaveClip.App_609549373_18097662244893332_4430383863596991914_n_qercbi.webp',
   'https://res.cloudinary.com/ddnlbizum/image/upload/v1771771026/SaveClip.App_609175735_18097662253893332_8146461371284243094_n_ozlh8w.webp',
+  'https://res.cloudinary.com/ddnlbizum/image/upload/v1772738657/SnapInsta.to_645820956_18062292653673356_3911402741580432231_n_zlayeg.jpg',
+  
 ]
+
+const CATWALK_VIDEOS = [
+  'https://res.cloudinary.com/ddnlbizum/video/upload/v1772738658/SnapInsta.to_AQPnrJCfWMiPSwq881LXnCoSPKo7xhRO7g_Xy8oOSWbLJLa0TiheBoIJvwLk2PoN-XQ2PpdQuDsgYmfQ0fjyOV5DR0gfZT2p8Leomy0_hwykcv.mp4',
+  'https://res.cloudinary.com/ddnlbizum/video/upload/v1772739597/b1622b9a-ddcb-408c-9f6f-96307071ca88_zw6lus.mov',
+  'https://res.cloudinary.com/ddnlbizum/video/upload/v1772738660/SnapInsta.to_AQMhww-y8LGif18Ao6ryEMvqGWzBaYDilwXOc8__84NYkVizy_j0ezgqulJyp5_8S1vTeLK85LfSf10tGw38-L5C_begzog.mp4',
+  'https://res.cloudinary.com/ddnlbizum/video/upload/v1772738658/SnapInsta.to_AQNSc5d9F5Z3SGEpc9v7bz3nWF6OYYIany9PJWVuf5oMeNINxhS__4wJpIKz58A5vfppR6ERxSllEIHBHXnGCjkoryk7SLWT3nt-AtE_ztzawj.mp4',
+  'https://res.cloudinary.com/ddnlbizum/video/upload/v1772739402/5bccecbb-77e8-4cc3-bd27-427fddf3c94a_lwqpxf.mov',
+  'https://res.cloudinary.com/ddnlbizum/video/upload/v1772739476/87d31cbd-17f7-4467-8570-4495fcf7ec96_qycbwh.mov',
+  'https://res.cloudinary.com/ddnlbizum/video/upload/v1772739660/c9bce72a-a0e1-48a8-bc0d-7c22f48c0a02_o8newb.mov',
+  'https://res.cloudinary.com/ddnlbizum/video/upload/v1772739501/9f0cba07-5ac6-4027-aa8e-07794cb4a63f_qpcrpo.mov',
+  'https://res.cloudinary.com/ddnlbizum/video/upload/v1772739808/WhatsApp_Video_2026-02-24_at_1.09.39_PM_upgoek.mp4',
+  'https://res.cloudinary.com/ddnlbizum/video/upload/v1772739791/WhatsApp_Video_2026-02-24_at_1.09.23_PM_aeguij.mp4',
+  'https://res.cloudinary.com/ddnlbizum/video/upload/v1772739397/1ded101b-2f9f-4cca-9aba-01b02026e545_xi6c4i.mov',
+  'https://res.cloudinary.com/ddnlbizum/video/upload/v1772739597/b1622b9a-ddcb-408c-9f6f-96307071ca88_zw6lus.mov',
+]
+
+/** Polaroid + Catwalk (combined course) videos */
+const POLAROID_CATWALK_VIDEOS = [
+  'https://res.cloudinary.com/ddnlbizum/video/upload/v1772739587/bea21f76-3146-440f-aa0d-0ee455145b15_xhumdd.mov',
+  'https://res.cloudinary.com/ddnlbizum/video/upload/v1772738661/SnapInsta.to_AQPtROaIxYpTnmrG5gYyXcZjGiD48NcP5zZDtIie26V0uuysFdGBnJ7bu5hEhOW8D3Ab4Qn01jPgTmHI48XKOcEl_ff3agd.mp4',
+  'https://res.cloudinary.com/ddnlbizum/video/upload/v1772738657/SnapInsta.to_AQOPctXf60kkq_Tf_sNT4h8ftLXhq6l6gkod16-rDED2POA33-GsnzqYxOVFvJRXafVKUDTOzn7dA1Xntbr2kx5OTTY4VVVJ2QiMhHk_hdojbu.mp4',
+  'https://res.cloudinary.com/ddnlbizum/video/upload/v1772739437/9cb55d33-81ed-4235-9a44-6b39f4826616_rt7ahf.mov',
+  'https://res.cloudinary.com/ddnlbizum/video/upload/v1772739393/c14d7b71-3a71-4fb4-91dc-82bf01add258_ly3ki1.mov',
+]
+
+/** Videos that should start at 4 seconds instead of 0 — use Cloudinary so_4 so they play from 4s */
+const VIDEOS_START_AT_4_SEC = [
+  'https://res.cloudinary.com/ddnlbizum/video/upload/v1772739501/9f0cba07-5ac6-4027-aa8e-07794cb4a63f_qpcrpo.mov',
+  'https://res.cloudinary.com/ddnlbizum/video/upload/v1772739660/c9bce72a-a0e1-48a8-bc0d-7c22f48c0a02_o8newb.mov',
+]
+
+function getVideoSrc(url: string): string {
+  if (VIDEOS_START_AT_4_SEC.some((u) => url.includes(u) || u.includes(url)))
+    return url.replace('/upload/', '/upload/so_4/')
+  return url
+}
 
 export default function Courses() {
   const [editorialIndex, setEditorialIndex] = useState(0)
+  const [catwalkIndex, setCatwalkIndex] = useState(0)
   const [ref, inView] = useInView({
     threshold: 0.1,
     triggerOnce: true,
@@ -27,13 +67,20 @@ export default function Courses() {
     return () => clearInterval(t)
   }, [])
 
+  useEffect(() => {
+    const t = setInterval(() => {
+      setCatwalkIndex((i) => (i + 1) % CATWALK_VIDEOS.length)
+    }, 7000)
+    return () => clearInterval(t)
+  }, [])
+
   const courses = [
     {
       id: 1,
       title: 'Catwalk Only',
       duration: 'Runway & stage',
       description: 'Focused runway and catwalk training. Signature walk, posture, stage presence, and garment presentation.',
-      video: 'https://res.cloudinary.com/ddnlbizum/video/upload/v1771774448/SaveClip.App_AQMypVJ_NRsuoPxx9rf40hicu-swQmYMmfx_XU8iUBCj8zSbyUvgujHnuf-4QW3Sd923mknVFJiuqRtZbImvbfUU51F62aGCGL03aBo_bprbss_abdc51.mp4',
+      videos: CATWALK_VIDEOS,
       href: '/courses/academy-training',
     },
     {
@@ -50,7 +97,7 @@ export default function Courses() {
       title: 'Catwalk + Polaroid Development',
       duration: 'Full package',
       description: 'Full package: catwalk training and polaroid development combined for complete model readiness.',
-      video: 'https://res.cloudinary.com/ddnlbizum/video/upload/v1771779018/SaveClip.App_AQOuWkKbKn1uRvCuu4B2setEg0SBCr_RBKwiItfJ8U9DGRZsSHn2vBg4GbfWEzZ6jw89tM4ISDP9xFzdCooJr-h962qL4vc-qXzKD2c_nw4kd7_70ff3b.mp4',
+      videos: POLAROID_CATWALK_VIDEOS,
       href: '/apply',
     },
     {
@@ -101,7 +148,26 @@ export default function Courses() {
             >
               <Link href={course.href} className="block">
                 <div className="relative aspect-[3/4] overflow-hidden bg-luxury-gray">
-                  {'video' in course && course.video ? (
+                  {'videos' in course && Array.isArray(course.videos) && course.videos.length > 0 ? (
+                    <div className="absolute inset-0">
+                      <AnimatePresence mode="wait" initial={false}>
+                        <motion.video
+                          key={catwalkIndex}
+                          src={getVideoSrc(course.videos[catwalkIndex % course.videos.length])}
+                          autoPlay
+                          muted
+                          loop
+                          playsInline
+                          className="absolute inset-0 w-full h-full object-cover object-center grayscale group-hover:grayscale-0 transition-all duration-1000"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.6 }}
+                          whileHover={{ scale: 1.1 }}
+                        />
+                      </AnimatePresence>
+                    </div>
+                  ) : 'video' in course && typeof course.video === 'string' ? (
                     <motion.video
                       src={course.video}
                       autoPlay

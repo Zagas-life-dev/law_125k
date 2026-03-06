@@ -1,11 +1,17 @@
 'use client'
 
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import Link from 'next/link'
 import Navigation from '@/components/Navigation'
 import Footer from '@/components/Footer'
 import WhatsAppButton from '@/components/WhatsAppButton'
+
+const BRANCHES = [
+  { id: 'abuja' as const, label: 'Abuja', whatsapp: '2349039321128' },
+  { id: 'lagos' as const, label: 'Lagos', whatsapp: '254726960969' },
+]
 
 const programs = [
   {
@@ -43,8 +49,31 @@ function formatNaira (n: number) {
   return `₦${(n / 1000).toFixed(0)}K`
 }
 
+function formatNairaFull (n: number) {
+  return `₦${n.toLocaleString()}`
+}
+
+function whatsAppPayUrl (
+  program: { title: string; price: number },
+  branch: typeof BRANCHES[number]
+) {
+  const branchLabel = branch.label
+  const text = encodeURIComponent(
+    `Hi, I'm interested in the ${branchLabel} branch. I would like to make payment for: ${program.title} (${formatNairaFull(program.price)}). Please guide me through the process.`
+  )
+  return `https://wa.me/${branch.whatsapp}?text=${text}`
+}
+
+function whatsAppGeneralPayUrl (branch: typeof BRANCHES[number]) {
+  const text = encodeURIComponent(
+    `Hi, I'm interested in the ${branch.label} branch. I would like to make payment for a LAW Model Academy program. Please guide me through the process.`
+  )
+  return `https://wa.me/${branch.whatsapp}?text=${text}`
+}
+
 export default function CoursesPage() {
   const [ref, inView] = useInView({ threshold: 0.1, triggerOnce: true })
+  const [branch, setBranch] = useState<typeof BRANCHES[number]>(BRANCHES[0])
 
   return (
     <main className="relative">
@@ -95,6 +124,33 @@ export default function CoursesPage() {
               (applies to all programs)
             </span>
           </motion.div>
+          {/* Branch selector */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="flex flex-col items-center gap-4 mt-10"
+          >
+            <span className="text-xs tracking-[0.2em] uppercase text-luxury-black/50 ultra-thin-text">
+              Select your branch for payment
+            </span>
+            <div className="flex items-center gap-2 p-1 border border-luxury-black/10 rounded-sm">
+              {BRANCHES.map((b) => (
+                <button
+                  key={b.id}
+                  type="button"
+                  onClick={() => setBranch(b)}
+                  className={`px-6 py-2.5 text-xs tracking-[0.2em] uppercase transition-colors ultra-thin-text ${
+                    branch.id === b.id
+                      ? 'bg-luxury-black text-luxury-white'
+                      : 'text-luxury-black/60 hover:text-luxury-black hover:bg-luxury-black/5'
+                  }`}
+                >
+                  {b.label}
+                </button>
+              ))}
+            </div>
+          </motion.div>
         </div>
       </section>
 
@@ -132,13 +188,24 @@ export default function CoursesPage() {
                   <p className="text-base text-luxury-black/70 leading-relaxed thin-text font-light mb-8 flex-1">
                     {program.description}
                   </p>
-                  <Link
-                    href={program.href}
-                    className="inline-flex items-center gap-2 text-xs tracking-[0.25em] uppercase text-luxury-black/70 hover:text-luxury-black transition-colors ultra-thin-text"
-                  >
-                    {program.href === '/apply' ? 'Apply for this program' : 'View details'}
-                    <span aria-hidden>→</span>
-                  </Link>
+                  <div className="flex flex-wrap items-center gap-6">
+                    <a
+                      href={whatsAppPayUrl(program, branch)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-6 py-3 bg-luxury-black text-luxury-white text-xs tracking-[0.2em] uppercase hover:bg-luxury-black/90 transition-colors ultra-thin-text"
+                    >
+                      Make payment
+                      <span aria-hidden>→</span>
+                    </a>
+                    <Link
+                      href={program.href}
+                      className="inline-flex items-center gap-2 text-xs tracking-[0.25em] uppercase text-luxury-black/70 hover:text-luxury-black transition-colors ultra-thin-text"
+                    >
+                      {program.href === '/apply' ? 'Apply for this program' : 'View details'}
+                      <span aria-hidden>→</span>
+                    </Link>
+                  </div>
                 </div>
               </motion.div>
             ))}
@@ -159,15 +226,41 @@ export default function CoursesPage() {
               Ready to enrol?
             </h2>
             <div className="w-20 h-px bg-luxury-white/30 mx-auto mb-6" />
-            <p className="text-base text-luxury-white/70 leading-relaxed thin-text font-light mb-10">
-              Submit your application and our team will guide you through the next steps.
+            <p className="text-base text-luxury-white/70 leading-relaxed thin-text font-light mb-6">
+              Submit your application or make payment via WhatsApp ({branch.label} branch). Our team will guide you through the next steps.
             </p>
-            <Link
-              href="/apply"
-              className="inline-block px-12 py-4 bg-luxury-white text-luxury-black editorial-text text-sm tracking-[0.2em] uppercase hover:bg-luxury-white/90 transition-colors"
-            >
-              Apply Now
-            </Link>
+            <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
+              {BRANCHES.map((b) => (
+                <button
+                  key={b.id}
+                  type="button"
+                  onClick={() => setBranch(b)}
+                  className={`px-4 py-2 text-xs tracking-[0.2em] uppercase border transition-colors ${
+                    branch.id === b.id
+                      ? 'bg-luxury-white text-luxury-black border-luxury-white'
+                      : 'text-luxury-white/70 border-luxury-white/30 hover:text-luxury-white hover:border-luxury-white/50'
+                  }`}
+                >
+                  {b.label}
+                </button>
+              ))}
+            </div>
+            <div className="flex flex-wrap items-center justify-center gap-4">
+              <a
+                href={whatsAppGeneralPayUrl(branch)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block px-12 py-4 bg-[#25D366] text-white editorial-text text-sm tracking-[0.2em] uppercase hover:bg-[#20bd5a] transition-colors"
+              >
+                Pay via WhatsApp
+              </a>
+              <Link
+                href="/apply"
+                className="inline-block px-12 py-4 bg-luxury-white text-luxury-black editorial-text text-sm tracking-[0.2em] uppercase hover:bg-luxury-white/90 transition-colors border border-luxury-white/30"
+              >
+                Apply Now
+              </Link>
+            </div>
           </motion.div>
         </div>
       </section>

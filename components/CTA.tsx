@@ -4,6 +4,10 @@ import { useInView } from 'react-intersection-observer'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useRef } from 'react'
 
+/** Same as Hero – single background video */
+const HERO_VIDEO_URL =
+  'https://res.cloudinary.com/ddnlbizum/video/upload/v1772467044/Untitled_design_2_hyrnxg.mp4'
+
 export default function CTA() {
   const [ref, inView] = useInView({
     threshold: 0.2,
@@ -25,23 +29,19 @@ export default function CTA() {
       id="cta"
       className="relative min-h-screen bg-luxury-black flex items-center justify-center overflow-hidden"
     >
-      {/* Video Background */}
+      {/* Video Background – same as hero, framed on lower portion */}
       <motion.div
         className="absolute inset-0 z-0"
         style={{ scale: videoScale }}
       >
         <video
+          src={HERO_VIDEO_URL}
           autoPlay
           loop
           muted
           playsInline
-          className="w-full h-full object-cover"
-        >
-          <source
-            src="https://videos.pexels.com/video-files/3045163/3045163-hd_1920_1080_25fps.mp4"
-            type="video/mp4"
-          />
-        </video>
+          className="w-full h-full object-cover object-bottom"
+        />
         <div className="absolute inset-0 bg-luxury-black/70" />
       </motion.div>
 
