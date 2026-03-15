@@ -41,6 +41,7 @@ export default function About() {
                 loop
                 playsInline
                 autoPlay
+                preload="metadata"
                 className="w-full h-full object-cover object-center grayscale group-hover:grayscale-0 transition-[filter] duration-700 ease-out"
               />
               {/* Large Number Overlay */}
@@ -80,7 +81,7 @@ export default function About() {
               className="space-y-6 text-base md:text-lg text-luxury-black/70 leading-relaxed thin-text font-light"
             >
               <p>
-                LAW Models Academy is a luxury training institution led by founder
+                LAW Model Academy is a luxury training institution led by founder
                 and CEO Larry Walker Ologbosere. The academy produces runway-ready
                 professionals for top fashion brands including Gucci, Alexander
                 McQueen, and Prada.

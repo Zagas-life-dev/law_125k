@@ -4,38 +4,42 @@ import { motion } from 'framer-motion'
 import Navigation from '@/components/Navigation'
 import Footer from '@/components/Footer'
 import WhatsAppButton from '@/components/WhatsAppButton'
+import { EDITORIAL_VIDEOS, EDITORIAL_MEDIA } from '@/lib/gallery-data'
+import { useBackgroundVideoCycle } from '@/lib/useBackgroundVideoCycle'
 
-const EDITORIAL_GALLERY_MEDIA = [
-  {
-    type: 'video' as const,
-    src: 'https://res.cloudinary.com/ddnlbizum/video/upload/v1772739393/c14d7b71-3a71-4fb4-91dc-82bf01add258_ly3ki1.mov',
-  },
-  {
-    type: 'video' as const,
-    src: 'https://res.cloudinary.com/ddnlbizum/video/upload/v1772738661/SnapInsta.to_AQPtROaIxYpTnmrG5gYyXcZjGiD48NcP5zZDtIie26V0uuysFdGBnJ7bu5hEhOW8D3Ab4Qn01jPgTmHI48XKOcEl_ff3agd.mp4',
-  },
-  {
-    type: 'video' as const,
-    src: 'https://res.cloudinary.com/ddnlbizum/video/upload/v1772738657/SnapInsta.to_AQOPctXf60kkq_Tf_sNT4h8ftLXhq6l6gkod16-rDED2POA33-GsnzqYxOVFvJRXafVKUDTOzn7dA1Xntbr2kx5OTTY4VVVJ2QiMhHk_hdojbu.mp4',
-  },
-  {
-    type: 'image' as const,
-    src: 'https://res.cloudinary.com/ddnlbizum/image/upload/v1772738657/SnapInsta.to_645820956_18062292653673356_3911402741580432231_n_zlayeg.jpg',
-  },
-  {
-    type: 'image' as const,
-    src: 'https://res.cloudinary.com/ddnlbizum/image/upload/v1772738656/SnapInsta.to_642624091_18062292671673356_3725490651833664552_n_gqfwew.jpg',
-  },
-]
+const FADE_DURATION = 0.25
 
 export default function EditorialStudioPage() {
+  const { currentVideo, transitioning, playNextRandom, onVideoPlay } = useBackgroundVideoCycle(EDITORIAL_VIDEOS)
+
   return (
     <main className="relative">
       <Navigation />
       <WhatsAppButton />
 
       <section className="relative min-h-[70vh] bg-luxury-black flex items-center justify-center overflow-hidden">
-        <div className="container mx-auto px-6 lg:px-16 py-32">
+        {/* Background: random editorial videos */}
+        <div className="absolute inset-0 z-0">
+          <video
+            key={currentVideo}
+            src={currentVideo}
+            autoPlay
+            muted
+            playsInline
+            preload="metadata"
+            onEnded={playNextRandom}
+            onPlay={onVideoPlay}
+            className="w-full h-full object-cover grayscale"
+          />
+          <div className="absolute inset-0 bg-luxury-black/60 pointer-events-none" />
+          <motion.div
+            className="absolute inset-0 bg-black pointer-events-none z-[1]"
+            animate={{ opacity: transitioning ? 1 : 0 }}
+            transition={{ duration: FADE_DURATION, ease: 'easeInOut' }}
+          />
+        </div>
+
+        <div className="container mx-auto px-6 lg:px-16 py-32 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -114,27 +118,20 @@ export default function EditorialStudioPage() {
               </span>
             </div>
             <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
-              {EDITORIAL_GALLERY_MEDIA.map((item) => (
+              {EDITORIAL_MEDIA.map((item) => (
                 <div
-                  key={item.src}
+                  key={item.id}
                   className="relative aspect-[3/4] overflow-hidden bg-luxury-black"
                 >
-                  {item.type === 'video' ? (
-                    <video
-                      src={item.src}
-                      autoPlay
-                      muted
-                      loop
-                      playsInline
-                      className="w-full h-full object-cover object-center grayscale hover:grayscale-0 transition-all duration-700"
-                    />
-                  ) : (
-                    <img
-                      src={item.src}
-                      alt="Editorial studio"
-                      className="w-full h-full object-cover object-center grayscale hover:grayscale-0 transition-all duration-700"
-                    />
-                  )}
+                  <video
+                    src={item.src}
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    preload="metadata"
+                    className="w-full h-full object-cover object-center grayscale hover:grayscale-0 transition-all duration-700"
+                  />
                   <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-luxury-black/40 via-transparent to-transparent" />
                 </div>
               ))}

@@ -34,14 +34,14 @@ const programs = [
     description: 'Full package: catwalk training and polaroid development combined for complete model readiness.',
     price: 130000,
     note: '50K + 80K',
-    href: '/apply',
+    href: '/courses/full-package',
   },
   {
     number: '04',
     title: 'Online Classes',
-    description: 'Flexible remote training. Access core modules and feedback from anywhere.',
+    description: 'Flexible remote training. Catwalk and industry modules from anywhere.',
     price: 70000,
-    href: '/apply',
+    href: '/courses/online-package',
   },
 ]
 

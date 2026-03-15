@@ -4,17 +4,7 @@ import { useInView } from 'react-intersection-observer'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
-
-const EDITORIAL_IMAGES = [
-  'https://res.cloudinary.com/ddnlbizum/image/upload/v1771771028/SaveClip.App_610542066_18097662157893332_8979088537474099440_n_mscs8n.webp',
-  'https://res.cloudinary.com/ddnlbizum/image/upload/v1771771027/SaveClip.App_609552397_18097662214893332_4789506225843562602_n_rlaeqb.webp',
-  'https://res.cloudinary.com/ddnlbizum/image/upload/v1771771027/SaveClip.App_610702440_18097662223893332_6033236831334538591_n_la0iem.webp',
-  'https://res.cloudinary.com/ddnlbizum/image/upload/v1772738656/SnapInsta.to_642624091_18062292671673356_3725490651833664552_n_gqfwew.jpg',
-  'https://res.cloudinary.com/ddnlbizum/image/upload/v1771771026/SaveClip.App_609549373_18097662244893332_4430383863596991914_n_qercbi.webp',
-  'https://res.cloudinary.com/ddnlbizum/image/upload/v1771771026/SaveClip.App_609175735_18097662253893332_8146461371284243094_n_ozlh8w.webp',
-  'https://res.cloudinary.com/ddnlbizum/image/upload/v1772738657/SnapInsta.to_645820956_18062292653673356_3911402741580432231_n_zlayeg.jpg',
-  
-]
+import { IMAGES as GALLERY_IMAGES } from '@/lib/gallery-data'
 
 const CATWALK_VIDEOS = [
   'https://res.cloudinary.com/ddnlbizum/video/upload/v1772738658/SnapInsta.to_AQPnrJCfWMiPSwq881LXnCoSPKo7xhRO7g_Xy8oOSWbLJLa0TiheBoIJvwLk2PoN-XQ2PpdQuDsgYmfQ0fjyOV5DR0gfZT2p8Leomy0_hwykcv.mp4',
@@ -23,8 +13,8 @@ const CATWALK_VIDEOS = [
   'https://res.cloudinary.com/ddnlbizum/video/upload/v1772738658/SnapInsta.to_AQNSc5d9F5Z3SGEpc9v7bz3nWF6OYYIany9PJWVuf5oMeNINxhS__4wJpIKz58A5vfppR6ERxSllEIHBHXnGCjkoryk7SLWT3nt-AtE_ztzawj.mp4',
   'https://res.cloudinary.com/ddnlbizum/video/upload/v1772739402/5bccecbb-77e8-4cc3-bd27-427fddf3c94a_lwqpxf.mov',
   'https://res.cloudinary.com/ddnlbizum/video/upload/v1772739476/87d31cbd-17f7-4467-8570-4495fcf7ec96_qycbwh.mov',
-  'https://res.cloudinary.com/ddnlbizum/video/upload/v1772739660/c9bce72a-a0e1-48a8-bc0d-7c22f48c0a02_o8newb.mov',
-  'https://res.cloudinary.com/ddnlbizum/video/upload/v1772739501/9f0cba07-5ac6-4027-aa8e-07794cb4a63f_qpcrpo.mov',
+  // 'https://res.cloudinary.com/ddnlbizum/video/upload/v1772739660/c9bce72a-a0e1-48a8-bc0d-7c22f48c0a02_o8newb.mov',
+  // 'https://res.cloudinary.com/ddnlbizum/video/upload/v1772739501/9f0cba07-5ac6-4027-aa8e-07794cb4a63f_qpcrpo.mov',
   'https://res.cloudinary.com/ddnlbizum/video/upload/v1772739808/WhatsApp_Video_2026-02-24_at_1.09.39_PM_upgoek.mp4',
   'https://res.cloudinary.com/ddnlbizum/video/upload/v1772739791/WhatsApp_Video_2026-02-24_at_1.09.23_PM_aeguij.mp4',
   'https://res.cloudinary.com/ddnlbizum/video/upload/v1772739397/1ded101b-2f9f-4cca-9aba-01b02026e545_xi6c4i.mov',
@@ -40,15 +30,15 @@ const POLAROID_CATWALK_VIDEOS = [
   'https://res.cloudinary.com/ddnlbizum/video/upload/v1772739393/c14d7b71-3a71-4fb4-91dc-82bf01add258_ly3ki1.mov',
 ]
 
-/** Videos that should start at 4 seconds instead of 0 — use Cloudinary so_4 so they play from 4s */
-const VIDEOS_START_AT_4_SEC = [
+/** Videos that should start at 6 seconds instead of 0 — use Cloudinary so_6 so they play from 6s */
+const VIDEOS_START_AT_6_SEC = [
   'https://res.cloudinary.com/ddnlbizum/video/upload/v1772739501/9f0cba07-5ac6-4027-aa8e-07794cb4a63f_qpcrpo.mov',
   'https://res.cloudinary.com/ddnlbizum/video/upload/v1772739660/c9bce72a-a0e1-48a8-bc0d-7c22f48c0a02_o8newb.mov',
 ]
 
 function getVideoSrc(url: string): string {
-  if (VIDEOS_START_AT_4_SEC.some((u) => url.includes(u) || u.includes(url)))
-    return url.replace('/upload/', '/upload/so_4/')
+  if (VIDEOS_START_AT_6_SEC.some((u) => url.includes(u) || u.includes(url)))
+    return url.replace('/upload/', '/upload/so_6/')
   return url
 }
 
@@ -62,7 +52,7 @@ export default function Courses() {
 
   useEffect(() => {
     const t = setInterval(() => {
-      setEditorialIndex((i) => (i + 1) % EDITORIAL_IMAGES.length)
+      setEditorialIndex((i) => (i + 1) % GALLERY_IMAGES.length)
     }, 4000)
     return () => clearInterval(t)
   }, [])
@@ -88,8 +78,8 @@ export default function Courses() {
       title: 'Polaroid Development',
       duration: 'Portfolio & scouting',
       description: 'Portfolio and polaroid development for scouting and castings. Build a professional presentation for agencies.',
-      image: EDITORIAL_IMAGES[0],
-      images: EDITORIAL_IMAGES,
+      image: GALLERY_IMAGES[0],
+      images: GALLERY_IMAGES,
       href: '/courses/editorial-studio',
     },
     {
@@ -98,15 +88,15 @@ export default function Courses() {
       duration: 'Full package',
       description: 'Full package: catwalk training and polaroid development combined for complete model readiness.',
       videos: POLAROID_CATWALK_VIDEOS,
-      href: '/apply',
+      href: '/courses/full-package',
     },
     {
       id: 4,
       title: 'Online Classes',
       duration: 'Remote training',
-      description: 'Flexible remote training. Access core modules and feedback from anywhere.',
+      description: 'Flexible remote training. Catwalk and industry modules from anywhere.',
       image: 'https://res.cloudinary.com/ddnlbizum/image/upload/v1771779408/SaveClip.App_588120983_18327847240241700_8401602696163300717_n_xspmfl.jpg',
-      href: '/apply',
+      href: '/courses/online-package',
     },
   ]
 
@@ -158,6 +148,7 @@ export default function Courses() {
                           muted
                           loop
                           playsInline
+                          preload="metadata"
                           className="absolute inset-0 w-full h-full object-cover object-center grayscale group-hover:grayscale-0 transition-all duration-1000"
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
@@ -174,6 +165,7 @@ export default function Courses() {
                       muted
                       loop
                       playsInline
+                      preload="metadata"
                       className="w-full h-full object-cover object-center grayscale group-hover:grayscale-0 transition-all duration-1000"
                       whileHover={{ scale: 1.1 }}
                       transition={{ duration: 0.8 }}
@@ -185,6 +177,7 @@ export default function Courses() {
                           key={editorialIndex}
                           src={course.images[editorialIndex % course.images.length]}
                           alt={course.title}
+                          loading="lazy"
                           className="absolute inset-0 w-full h-full object-cover object-center grayscale group-hover:grayscale-0 transition-all duration-1000"
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
@@ -198,6 +191,7 @@ export default function Courses() {
                     <motion.img
                       src={course.image}
                       alt={course.title}
+                      loading="lazy"
                       className="w-full h-full object-cover object-center grayscale group-hover:grayscale-0 transition-all duration-1000"
                       whileHover={{ scale: 1.1 }}
                       transition={{ duration: 0.8 }}

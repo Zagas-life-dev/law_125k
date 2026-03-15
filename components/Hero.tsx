@@ -2,12 +2,16 @@
 
 import { useRef } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
+import { HERO_MEDIA } from '@/lib/gallery-data'
+import { useBackgroundVideoCycle } from '@/lib/useBackgroundVideoCycle'
 
-const CLOUDINARY_VIDEO_URL =
-  'https://res.cloudinary.com/ddnlbizum/video/upload/v1772467044/Untitled_design_2_hyrnxg.mp4'
+const FADE_DURATION = 0.25
+
+const HERO_VIDEO_URLS = HERO_MEDIA.map((m) => m.src)
 
 export default function Hero() {
   const containerRef = useRef<HTMLDivElement>(null)
+  const { currentVideo, transitioning, playNextRandom, onVideoPlay } = useBackgroundVideoCycle(HERO_VIDEO_URLS)
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -24,20 +28,28 @@ export default function Hero() {
       id="hero"
       className="relative h-screen w-full overflow-hidden"
     >
-      {/* Video Background - Cloudinary direct URL */}
+      {/* Video Background - catwalk videos from gallery-data */}
       <motion.div
         className="absolute inset-0 z-0"
         style={{ scale: videoScale, opacity: videoOpacity }}
       >
         <video
-          src={CLOUDINARY_VIDEO_URL}
+          key={currentVideo}
+          src={currentVideo}
           autoPlay
-          loop
           muted
           playsInline
+          preload="metadata"
+          onEnded={playNextRandom}
+          onPlay={onVideoPlay}
           className="w-full h-full object-cover grayscale"
         />
         <div className="absolute inset-0 bg-luxury-black/50 pointer-events-none" />
+        <motion.div
+          className="absolute inset-0 bg-black pointer-events-none z-[1]"
+          animate={{ opacity: transitioning ? 1 : 0 }}
+          transition={{ duration: FADE_DURATION, ease: 'easeInOut' }}
+        />
       </motion.div>
 
       {/* Asymmetric Layout */}
@@ -87,7 +99,7 @@ export default function Hero() {
             >
               <div className="max-w-md">
                 <p className="text-lg md:text-xl text-luxury-white/70 leading-relaxed mb-6 thin-text font-light">
-                  LAW Models Academy is a high-fashion training institution founded
+                  LAW Model Academy is a high-fashion training institution founded
                   by Larry Walker Ologbosere (CEO). We develop elite talent for
                   Africa’s premier runways and global fashion houses.
                 </p>

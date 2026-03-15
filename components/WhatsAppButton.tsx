@@ -13,7 +13,7 @@ export default function WhatsAppButton() {
   }, [])
 
   const phoneNumber = '2348124128223' // Remove + and spaces for WhatsApp link
-  const message = encodeURIComponent('Hello, I am interested in learning more about LAW Models Academy.')
+  const message = encodeURIComponent('Hello, I am interested in learning more about LAW Model Academy.')
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`
 
   if (!isVisible) return null

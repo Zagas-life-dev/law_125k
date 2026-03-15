@@ -40,6 +40,7 @@ export default function CTA() {
           loop
           muted
           playsInline
+          preload="metadata"
           className="w-full h-full object-cover object-bottom"
         />
         <div className="absolute inset-0 bg-luxury-black/70" />

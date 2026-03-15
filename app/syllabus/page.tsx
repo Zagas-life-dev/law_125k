@@ -176,7 +176,7 @@ export default function SyllabusPage() {
             </h2>
             <div className="w-20 h-px bg-luxury-white/30 mx-auto mb-8" />
             <p className="text-base md:text-lg text-luxury-white/70 leading-relaxed thin-text font-light mb-12">
-              Join LAW Models Academy and transform your modeling career with
+              Join LAW Model Academy and transform your modeling career with
               comprehensive training from industry masters.
             </p>
             <motion.a

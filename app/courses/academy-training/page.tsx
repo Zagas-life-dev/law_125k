@@ -1,18 +1,46 @@
 'use client'
 
+import Link from 'next/link'
 import { motion } from 'framer-motion'
 import Navigation from '@/components/Navigation'
 import Footer from '@/components/Footer'
 import WhatsAppButton from '@/components/WhatsAppButton'
+import { CATWALK_VIDEOS } from '@/lib/gallery-data'
+import { useBackgroundVideoCycle } from '@/lib/useBackgroundVideoCycle'
+
+const FADE_DURATION = 0.25
 
 export default function AcademyTrainingPage() {
+  const { currentVideo, transitioning, playNextRandom, onVideoPlay } = useBackgroundVideoCycle(CATWALK_VIDEOS)
+
   return (
     <main className="relative">
       <Navigation />
       <WhatsAppButton />
 
       <section className="relative min-h-[70vh] bg-luxury-black flex items-center justify-center overflow-hidden">
-        <div className="container mx-auto px-6 lg:px-16 py-32">
+        {/* Background: random catwalk videos */}
+        <div className="absolute inset-0 z-0">
+          <video
+            key={currentVideo}
+            src={currentVideo}
+            autoPlay
+            muted
+            playsInline
+            preload="metadata"
+            onEnded={playNextRandom}
+            onPlay={onVideoPlay}
+            className="w-full h-full object-cover grayscale"
+          />
+          <div className="absolute inset-0 bg-luxury-black/60 pointer-events-none" />
+          <motion.div
+            className="absolute inset-0 bg-black pointer-events-none z-[1]"
+            animate={{ opacity: transitioning ? 1 : 0 }}
+            transition={{ duration: FADE_DURATION, ease: 'easeInOut' }}
+          />
+        </div>
+
+        <div className="container mx-auto px-6 lg:px-16 py-32 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -28,6 +56,14 @@ export default function AcademyTrainingPage() {
             <div className="w-20 h-px bg-luxury-white/30 mx-auto mb-8" />
             <p className="text-lg md:text-xl text-luxury-white/70 max-w-2xl mx-auto leading-relaxed thin-text font-light">
               Signature walk, stage control, posture, and runway discipline.
+              Interested in agency and scouting?{' '}
+              <Link
+                href="/courses/industry-access"
+                className="text-luxury-white underline hover:no-underline"
+              >
+                Learn about the industry
+              </Link>
+              .
             </p>
           </motion.div>
         </div>
@@ -70,6 +106,17 @@ export default function AcademyTrainingPage() {
                 </div>
               ))}
             </div>
+
+            <p className="text-base text-luxury-black/70 leading-relaxed thin-text font-light pt-2">
+              Want to understand agency, contracts, and scouting?{' '}
+              <Link
+                href="/courses/industry-access"
+                className="text-luxury-black font-medium underline hover:no-underline"
+              >
+                Learn about the industry
+              </Link>
+              .
+            </p>
           </motion.div>
         </div>
       </section>
