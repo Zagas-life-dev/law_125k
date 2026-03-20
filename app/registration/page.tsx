@@ -21,10 +21,21 @@ type RegistrationResponse = {
 
 const GENDERS = ['Female', 'Male', 'Non-binary', 'Prefer not to say'] as const
 const YES_NO = ['Yes', 'No'] as const
+const MASTERCLASS_ADDRESS: Record<LocationOption, string> = {
+  Lagos: '2 Otunubi Street Ogba Ifako Road Lagos',
+  Abuja: 'MTF 6, Paradise Estate Phase 2 Lifecamp',
+}
 
 const toFixed2 = (num: number) => (Number.isFinite(num) ? num.toFixed(2) : '')
 const convertCmToIn = (cm: number) => cm / 2.54
 const convertInToCm = (inch: number) => inch * 2.54
+const convertKgToLb = (kg: number) => kg * 2.20462
+const convertLbToKg = (lb: number) => lb / 2.20462
+const convertInToFtIn = (inch: number) => {
+  const feet = Math.floor(inch / 12)
+  const remainingInches = inch - feet * 12
+  return `${feet}ft ${toFixed2(remainingInches)}in`
+}
 
 export default function RegistrationPage() {
   const [selectedLocation, setSelectedLocation] = useState<LocationOption | ''>('')
@@ -79,6 +90,39 @@ export default function RegistrationPage() {
     if (!Number.isFinite(parsed)) return ''
     return hipsUnit === 'cm' ? `${toFixed2(convertCmToIn(parsed))} in` : `${toFixed2(convertInToCm(parsed))} cm`
   }, [hipsValue, hipsUnit])
+
+  const heightConverted = useMemo(() => {
+    if (!heightValue) return ''
+    const parsed = Number(heightValue)
+    if (!Number.isFinite(parsed)) return ''
+    if (heightUnit === 'cm') {
+      const inches = convertCmToIn(parsed)
+      return `${toFixed2(inches)} in (${convertInToFtIn(inches)})`
+    }
+    const cm = convertInToCm(parsed)
+    return `${toFixed2(cm)} cm (${convertInToFtIn(parsed)})`
+  }, [heightValue, heightUnit])
+
+  const weightConverted = useMemo(() => {
+    if (!weightValue) return ''
+    const parsed = Number(weightValue)
+    if (!Number.isFinite(parsed)) return ''
+    return weightUnit === 'kg' ? `${toFixed2(convertKgToLb(parsed))} lb` : `${toFixed2(convertLbToKg(parsed))} kg`
+  }, [weightValue, weightUnit])
+
+  const bustChestConverted = useMemo(() => {
+    if (!bustChestValue) return ''
+    const parsed = Number(bustChestValue)
+    if (!Number.isFinite(parsed)) return ''
+    return bustChestUnit === 'cm' ? `${toFixed2(convertCmToIn(parsed))} in` : `${toFixed2(convertInToCm(parsed))} cm`
+  }, [bustChestValue, bustChestUnit])
+
+  const waistConverted = useMemo(() => {
+    if (!waistValue) return ''
+    const parsed = Number(waistValue)
+    if (!Number.isFinite(parsed)) return ''
+    return waistUnit === 'cm' ? `${toFixed2(convertCmToIn(parsed))} in` : `${toFixed2(convertInToCm(parsed))} cm`
+  }, [waistValue, waistUnit])
 
   const isFormReady = useMemo(() => {
     return Boolean(
@@ -171,6 +215,7 @@ export default function RegistrationPage() {
       hipsUnit: string
       hipsConverted: string
       shoeSize: string
+      address: string
     }
   ) => {
     const imageBitmap = await createImageBitmap(headshotFile)
@@ -204,6 +249,41 @@ export default function RegistrationPage() {
       const sx = (srcW - sw) / 2
       const sy = (srcH - sh) / 2
       ctx.drawImage(img, sx, sy, sw, sh, x, y, w, h)
+    }
+
+    const drawSingleLineFitted = (text: string, x: number, y: number, maxWidth: number) => {
+      let out = text
+      while (ctx.measureText(out).width > maxWidth && out.length > 1) {
+        out = `${out.slice(0, -2)}…`
+      }
+      ctx.fillText(out, x, y)
+    }
+
+    const drawWrappedLines = (text: string, x: number, y: number, maxWidth: number, lineHeight: number, maxLines: number) => {
+      const words = text.split(' ')
+      const lines: string[] = []
+      let current = ''
+
+      for (const word of words) {
+        const candidate = current ? `${current} ${word}` : word
+        if (ctx.measureText(candidate).width <= maxWidth) {
+          current = candidate
+        } else {
+          if (current) lines.push(current)
+          current = word
+        }
+      }
+      if (current) lines.push(current)
+
+      const capped = lines.slice(0, maxLines)
+      if (lines.length > maxLines) {
+        const last = capped[capped.length - 1] ?? ''
+        capped[capped.length - 1] = `${last.slice(0, Math.max(0, last.length - 1))}…`
+      }
+
+      capped.forEach((line, index) => {
+        ctx.fillText(line, x, y + index * lineHeight)
+      })
     }
 
     // Match the monochrome editorial look of the website.
@@ -262,22 +342,22 @@ export default function RegistrationPage() {
     // Name block
     ctx.fillStyle = '#FFFFFF'
     ctx.font = '600 44px Georgia, serif'
-    ctx.fillText(ticket.personName.toUpperCase(), 740, 330)
+    drawSingleLineFitted(ticket.personName.toUpperCase(), 740, 330, 560)
 
     // Details section
     ctx.fillStyle = 'rgba(255,255,255,0.82)'
-    ctx.font = '700 22px Inter, Arial, sans-serif'
-    ctx.fillText(`REG ID: ${ticket.regId}`, 740, 380)
+    ctx.font = '700 20px Inter, Arial, sans-serif'
+    drawSingleLineFitted(`REG ID: ${ticket.regId}`, 740, 380, 560)
 
     ctx.fillStyle = 'rgba(255,255,255,0.70)'
-    ctx.font = '300 22px Inter, Arial, sans-serif'
-    ctx.fillText(`GENDER: ${ticket.gender}`, 740, 420)
-    ctx.fillText(`CITY: ${ticket.cityState}`, 740, 455)
-    ctx.fillText(`PHONE: ${ticket.phone}`, 740, 490)
-    ctx.fillText(`AGE: ${ticket.age}`, 740, 525)
+    ctx.font = '300 20px Inter, Arial, sans-serif'
+    drawSingleLineFitted(`GENDER: ${ticket.gender}`, 740, 416, 560)
+    drawSingleLineFitted(`CITY: ${ticket.cityState}`, 740, 448, 560)
+    drawSingleLineFitted(`PHONE: ${ticket.phone}`, 740, 480, 560)
+    drawSingleLineFitted(`AGE: ${ticket.age}`, 740, 512, 560)
 
     // Modeling profile panel
-    drawRoundedRect(740, 560, canvas.width - 740 - cardPad, 165, 18)
+    drawRoundedRect(740, 548, canvas.width - 740 - cardPad, 178, 18)
     ctx.fillStyle = 'rgba(255,255,255,0.03)'
     ctx.fill()
     ctx.strokeStyle = 'rgba(255,255,255,0.12)'
@@ -286,31 +366,34 @@ export default function RegistrationPage() {
 
     ctx.fillStyle = '#FFFFFF'
     ctx.font = '700 18px Inter, Arial, sans-serif'
-    ctx.fillText('MODELING PROFILE', 780, 590)
+    ctx.fillText('MODELING PROFILE', 780, 580)
 
     ctx.fillStyle = 'rgba(255,255,255,0.72)'
-    ctx.font = '300 18px Inter, Arial, sans-serif'
-    ctx.fillText(
+    ctx.font = '300 16px Inter, Arial, sans-serif'
+    drawSingleLineFitted(
       `Height: ${ticket.heightValue} ${ticket.heightUnit.toUpperCase()} | Weight: ${ticket.weightValue} ${ticket.weightUnit.toUpperCase()}`,
       780,
-      618
+      606,
+      500
     )
-    ctx.fillText(
+    drawSingleLineFitted(
       `Bust/Chest: ${ticket.bustChestValue} ${ticket.bustChestUnit.toUpperCase()} | Waist: ${ticket.waistValue} ${ticket.waistUnit.toUpperCase()}`,
       780,
-      644
+      632,
+      500
     )
 
     const hipsLine = ticket.hipsConverted
       ? `Hips: ${ticket.hipsValue} ${ticket.hipsUnit.toUpperCase()} (${ticket.hipsConverted})`
       : `Hips: ${ticket.hipsValue} ${ticket.hipsUnit.toUpperCase()}`
-    ctx.fillText(hipsLine, 780, 670)
-    ctx.fillText(`Shoe Size: ${ticket.shoeSize}`, 780, 695)
+    drawSingleLineFitted(hipsLine, 780, 658, 500)
+    drawSingleLineFitted(`Shoe Size: ${ticket.shoeSize}`, 780, 684, 500)
 
     // Footer
     ctx.fillStyle = 'rgba(255,255,255,0.55)'
-    ctx.font = '300 18px Inter, Arial, sans-serif'
-    ctx.fillText(`MASTERCLASS: ${ticket.location.toUpperCase()} • ${new Date().toLocaleDateString()}`, 740, 760)
+    ctx.font = '300 16px Inter, Arial, sans-serif'
+    drawSingleLineFitted(`MASTERCLASS: ${ticket.location.toUpperCase()} • ${new Date().toLocaleDateString()}`, 740, 730, 560)
+    drawWrappedLines(`VENUE: ${ticket.address}`, 740, 752, 560, 18, 2)
 
     return canvas.toDataURL('image/png')
   }
@@ -407,6 +490,7 @@ export default function RegistrationPage() {
         hipsUnit,
         hipsConverted,
         shoeSize,
+        address: MASTERCLASS_ADDRESS[data.registration.location as LocationOption] ?? cityState,
       })
       setGeneratedCardDataUrl(card)
       setIsTicketModalOpen(true)
@@ -439,13 +523,13 @@ export default function RegistrationPage() {
             className="text-center"
           >
             <span className="text-xs text-luxury-white/40 tracking-[0.2em] uppercase ultra-thin-text mb-6 block">
-              Limited Seats
+              Free 1-Week Masterclass
             </span>
             <h1 className="editorial-text text-6xl md:text-7xl lg:text-8xl font-bold text-luxury-white mb-8 leading-tight">
               Masterclass Registration
             </h1>
             <p className="text-lg md:text-xl text-luxury-white/70 max-w-3xl mx-auto leading-relaxed thin-text font-light">
-              Choose your preferred city and complete your registration.
+              Free one-week masterclass with scouting and training. All heights, ages, and sizes are welcome.
             </p>
           </motion.div>
         </div>
@@ -480,7 +564,7 @@ export default function RegistrationPage() {
                   >
                     <p className="editorial-text text-2xl">{city}</p>
                     <p className={`thin-text text-xs mt-1 ${selectedLocation === city ? 'text-luxury-white/70' : 'text-luxury-black/50'}`}>
-                      Attend the {city} masterclass session
+                      {`Attend the ${city} free 1-week masterclass`}
                     </p>
                   </button>
                 ))}
@@ -615,6 +699,7 @@ export default function RegistrationPage() {
                           <option value="in">in</option>
                         </select>
                       </div>
+                      <p className="thin-text text-xs text-luxury-black/60 mt-2">Auto conversion: {heightConverted || '-'}</p>
                     </div>
                     <div>
                       <label className="block text-sm text-luxury-black/60 tracking-wider uppercase mb-2 thin-text">Weight</label>
@@ -625,6 +710,7 @@ export default function RegistrationPage() {
                           <option value="lb">lb</option>
                         </select>
                       </div>
+                      <p className="thin-text text-xs text-luxury-black/60 mt-2">Auto conversion: {weightConverted || '-'}</p>
                     </div>
                     <div>
                       <label className="block text-sm text-luxury-black/60 tracking-wider uppercase mb-2 thin-text">Bust / Chest</label>
@@ -635,6 +721,7 @@ export default function RegistrationPage() {
                           <option value="in">in</option>
                         </select>
                       </div>
+                      <p className="thin-text text-xs text-luxury-black/60 mt-2">Auto conversion: {bustChestConverted || '-'}</p>
                     </div>
                     <div>
                       <label className="block text-sm text-luxury-black/60 tracking-wider uppercase mb-2 thin-text">Waist</label>
@@ -645,6 +732,7 @@ export default function RegistrationPage() {
                           <option value="in">in</option>
                         </select>
                       </div>
+                      <p className="thin-text text-xs text-luxury-black/60 mt-2">Auto conversion: {waistConverted || '-'}</p>
                     </div>
                     <div>
                       <label className="block text-sm text-luxury-black/60 tracking-wider uppercase mb-2 thin-text">Hips</label>
@@ -784,6 +872,12 @@ export default function RegistrationPage() {
               <p className="editorial-text text-3xl text-luxury-black">Your Ticket</p>
               <p className="thin-text text-luxury-black/70">
                 Registration ID: <span className="font-medium">{successData.id}</span>
+              </p>
+              <p className="thin-text text-luxury-black/70">
+                Venue:{' '}
+                <span className="font-medium">
+                  {MASTERCLASS_ADDRESS[successData.location as LocationOption] ?? successData.location}
+                </span>
               </p>
             </div>
 

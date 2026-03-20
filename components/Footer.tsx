@@ -159,10 +159,12 @@ export default function Footer() {
                   2 Otunubi Street Ogba Ifako Road Lagos
                 </a>
                 <a
-                  href="tel:+254726960969"
+                  href="tel:+2348107519993
+"
                   className="text-sm text-luxury-white/70 hover:text-luxury-white transition-colors duration-300 block mt-1"
                 >
-                  +254 726 960969
+                  +234 810 751 9993
+
                 </a>
               </li>
             </ul>
