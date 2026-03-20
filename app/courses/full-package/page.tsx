@@ -41,27 +41,7 @@ const PACKAGE_MODULES = [
 ]
 
 export default function FullPackagePage() {
-  const [currentVideo, setCurrentVideo] = useState(getRandomVideo)
-  const [transitioning, setTransitioning] = useState(false)
-  const maxDurationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-
-  const playNextRandom = useCallback(() => {
-    if (maxDurationTimeoutRef.current) {
-      clearTimeout(maxDurationTimeoutRef.current)
-      maxDurationTimeoutRef.current = null
-    }
-    setTransitioning(true)
-    const t1 = setTimeout(() => {
-      setCurrentVideo(getRandomVideo())
-      const t2 = setTimeout(() => setTransitioning(false), (FADE_DURATION + 0.15) * 1000)
-      return () => clearTimeout(t2)
-    }, FADE_DURATION * 1000)
-    return () => clearTimeout(t1)
-  }, [])
-
-  useEffect(() => () => {
-    if (maxDurationTimeoutRef.current) clearTimeout(maxDurationTimeoutRef.current)
-  }, [])
+  const { currentVideo, transitioning, playNextRandom, onVideoPlay } = useBackgroundVideoCycle(VIDEOS)
 
   return (
     <main className="relative">

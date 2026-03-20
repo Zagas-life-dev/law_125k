@@ -27,6 +27,7 @@ export default function Navigation() {
     { name: 'Courses', href: '/courses', number: '03' },
     { name: 'Gallery', href: '/gallery', number: '04' },
     { name: 'Apply', href: '/apply', number: '05' },
+    { name: 'Registration', href: '/registration', number: '06' },
   ]
 
   return (

@@ -2,26 +2,40 @@
 
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { usePathname } from 'next/navigation'
 
 export default function LoadingScreen() {
+  const pathname = usePathname()
   const [isLoading, setIsLoading] = useState(true)
   const [progress, setProgress] = useState(0)
 
   useEffect(() => {
-    // Simulate loading progress
-    const interval = setInterval(() => {
+    // Restart overlay on every route change.
+    // Prevents cases where navigation happens after initial mount,
+    // but the loading overlay never restarts.
+    setIsLoading(true)
+    setProgress(0)
+
+    let intervalId: ReturnType<typeof setInterval> | null = null
+    let timeoutId: ReturnType<typeof setTimeout> | null = null
+
+    intervalId = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
-          clearInterval(interval)
-          setTimeout(() => setIsLoading(false), 500)
+          if (intervalId) clearInterval(intervalId)
+          intervalId = null
+          timeoutId = setTimeout(() => setIsLoading(false), 500)
           return 100
         }
         return prev + Math.random() * 15
       })
     }, 100)
 
-    return () => clearInterval(interval)
-  }, [])
+    return () => {
+      if (intervalId) clearInterval(intervalId)
+      if (timeoutId) clearTimeout(timeoutId)
+    }
+  }, [pathname])
 
   const containerVariants = {
     hidden: { opacity: 0 },

@@ -44,6 +44,68 @@ npm run dev
 
 3. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
+### Environment Variables (Supabase + Cloudinary registration)
+
+Create a `.env.local` file with:
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your_supabase_publishable_key
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_secret_key
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+CLOUDINARY_FOLDER=law-masterclass
+```
+
+Required resources:
+- Cloudinary account (for storing headshot, full-body photo, and optional walk video)
+- Supabase table: `masterclass_registrations` with columns:
+  - `id` (text or uuid, primary key)
+  - `location` (text)
+  - `full_name` (text)
+  - `age` (int)
+  - `date_of_birth` (text/date)
+  - `gender` (text)
+  - `phone` (text)
+  - `email` (text)
+  - `city_state` (text)
+  - `height_value` (text)
+  - `height_unit` (text)
+  - `weight_value` (text)
+  - `weight_unit` (text)
+  - `bust_chest_value` (text)
+  - `bust_chest_unit` (text)
+  - `waist_value` (text)
+  - `waist_unit` (text)
+  - `hips_value` (text)
+  - `hips_unit` (text)
+  - `hips_converted` (text, nullable)
+  - `shoe_size` (text)
+  - `has_modeling_experience` (text)
+  - `experience_types` (text, nullable)
+  - `prior_training` (text, nullable)
+  - `full_session_availability` (text)
+  - `motivation` (text)
+  - `goals` (text)
+  - `expected_gain` (text)
+  - `instagram_handle` (text, nullable)
+  - `tiktok_or_other` (text, nullable)
+  - `consent_photo_video` (text)
+  - `referral_source` (text)
+  - `headshot_url` (text)
+  - `full_body_url` (text)
+  - `walk_video_url` (text, nullable)
+  - `created_at` (timestamp)
+
+### Admin Dashboard (is_admin)
+
+To enable the `/admin` area:
+- Create `public.user_profiles` using `supabase/admin_user_profiles.sql`
+- In that table, set `is_admin = true` for the Supabase user(s) who should access the dashboard
+- Ensure `.env.local` includes:
+  - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (needed for admin login)
+
 ## Project Structure
 
 ```
