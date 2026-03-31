@@ -14,15 +14,19 @@ function getSupabaseAdmin() {
   })
 }
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   const check = await requireAdmin(req.headers.get('authorization'))
   if (!check.isAdmin) {
     return NextResponse.json({ error: check.reason }, { status: 401 })
   }
 
+  const { id } = await params
   const supabase = getSupabaseAdmin()
 
-  const { error } = await supabase.from('masterclass_registrations').delete().eq('id', params.id)
+  const { error } = await supabase.from('masterclass_registrations').delete().eq('id', id)
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 })

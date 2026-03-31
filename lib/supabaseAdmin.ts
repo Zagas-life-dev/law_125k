@@ -5,7 +5,7 @@ const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
 
 const ADMIN_PROFILES_TABLE = process.env.SUPABASE_ADMIN_PROFILES_TABLE ?? 'user_profiles'
 
-function getSupabaseAdmin() {
+export function getSupabaseAdminClient() {
   if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
     throw new Error('Missing Supabase server environment variables.')
   }
@@ -31,7 +31,7 @@ export async function requireAdmin(authorizationHeader: string | null): Promise<
   const token = getBearerToken(authorizationHeader)
   if (!token) return { isAdmin: false, reason: 'Missing Bearer token.' }
 
-  const supabaseAdmin = getSupabaseAdmin()
+  const supabaseAdmin = getSupabaseAdminClient()
 
   const { data: userData, error: userError } = await supabaseAdmin.auth.getUser(token)
   if (userError || !userData?.user) {

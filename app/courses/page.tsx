@@ -7,43 +7,22 @@ import Link from 'next/link'
 import Navigation from '@/components/Navigation'
 import Footer from '@/components/Footer'
 import WhatsAppButton from '@/components/WhatsAppButton'
+import { COURSE_PLANS } from '@/lib/coursePlans'
 
 const BRANCHES = [
   { id: 'abuja' as const, label: 'Abuja', whatsapp: '2349039321128' },
   { id: 'lagos' as const, label: 'Lagos', whatsapp: '254726960969' },
 ]
 
-const programs = [
-  {
-    number: '01',
-    title: 'Catwalk Only',
-    description: 'Focused runway and catwalk training. Signature walk, posture, stage presence, and garment presentation.',
-    price: 50000,
-    href: '/courses/academy-training',
-  },
-  {
-    number: '02',
-    title: 'Polaroid Development',
-    description: 'Portfolio and polaroid development for scouting and castings. Build a professional presentation for agencies.',
-    price: 80000,
-    href: '/courses/editorial-studio',
-  },
-  {
-    number: '03',
-    title: 'Catwalk + Polaroid Development',
-    description: 'Full package: catwalk training and polaroid development combined for complete model readiness.',
-    price: 130000,
-    note: '50K + 80K',
-    href: '/courses/full-package',
-  },
-  {
-    number: '04',
-    title: 'Online Classes',
-    description: 'Flexible remote training. Catwalk and industry modules from anywhere.',
-    price: 70000,
-    href: '/courses/online-package',
-  },
-]
+const programs = COURSE_PLANS.map((plan, index) => ({
+  number: String(index + 1).padStart(2, '0'),
+  title: plan.title,
+  description: plan.description,
+  price: plan.price,
+  href: plan.href,
+  code: plan.code,
+  note: plan.code === 'both' ? '50K + 80K' : undefined,
+}))
 
 function formatNaira (n: number) {
   return `₦${(n / 1000).toFixed(0)}K`
@@ -199,10 +178,10 @@ export default function CoursesPage() {
                       <span aria-hidden>→</span>
                     </a>
                     <Link
-                      href={program.href}
+                      href={`/student/onboarding?track=${program.code}`}
                       className="inline-flex items-center gap-2 text-xs tracking-[0.25em] uppercase text-luxury-black/70 hover:text-luxury-black transition-colors ultra-thin-text"
                     >
-                      {program.href === '/apply' ? 'Apply for this program' : 'View details'}
+                      Select this program
                       <span aria-hidden>→</span>
                     </Link>
                   </div>

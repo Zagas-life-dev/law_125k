@@ -6,6 +6,7 @@ import Image from 'next/image'
 import Navigation from '@/components/Navigation'
 import Footer from '@/components/Footer'
 import WhatsAppButton from '@/components/WhatsAppButton'
+import { getSupabaseBrowser } from '@/lib/supabaseBrowser'
 
 type LocationOption = 'Abuja' | 'Lagos'
 
@@ -13,6 +14,7 @@ type RegistrationResponse = {
   success: boolean
   registration: {
     id: string
+    regNumber: number
     fullName: string
     location: string
     headshotUrl: string
@@ -21,6 +23,9 @@ type RegistrationResponse = {
 
 const GENDERS = ['Female', 'Male', 'Non-binary', 'Prefer not to say'] as const
 const YES_NO = ['Yes', 'No'] as const
+const PLAN_TYPES = ['standard', 'custom'] as const
+const SCHOLARSHIP_TYPES = ['none', 'percentage', 'full'] as const
+const LOCATION_MODES = ['online', 'lagos', 'abuja', 'custom'] as const
 const MASTERCLASS_ADDRESS: Record<LocationOption, string> = {
   Lagos: '2 Otunubi Street Ogba Ifako Road Lagos',
   Abuja: 'MTF 6, Paradise Estate Phase 2 Lifecamp',
@@ -77,6 +82,18 @@ export default function RegistrationPage() {
 
   const [consentPhotoVideo, setConsentPhotoVideo] = useState('')
   const [referralSource, setReferralSource] = useState('')
+  const [enrollmentTracks, setEnrollmentTracks] = useState<string[]>([])
+  const [planType, setPlanType] = useState<(typeof PLAN_TYPES)[number]>('standard')
+  const [customPlanName, setCustomPlanName] = useState('')
+  const [totalDue, setTotalDue] = useState('')
+  const [amountPaid, setAmountPaid] = useState('')
+  const [dueDate, setDueDate] = useState('')
+  const [monthlyEnabled, setMonthlyEnabled] = useState(false)
+  const [monthlyAmount, setMonthlyAmount] = useState('')
+  const [scholarshipType, setScholarshipType] = useState<(typeof SCHOLARSHIP_TYPES)[number]>('none')
+  const [scholarshipPercent, setScholarshipPercent] = useState('')
+  const [locationMode, setLocationMode] = useState<(typeof LOCATION_MODES)[number]>('custom')
+  const [customLocationText, setCustomLocationText] = useState('')
 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
@@ -193,10 +210,14 @@ export default function RegistrationPage() {
     setIsTicketModalOpen(false)
   }
 
+  const toggleTrack = (track: string) => {
+    setEnrollmentTracks((prev) => (prev.includes(track) ? prev.filter((item) => item !== track) : [...prev, track]))
+  }
+
   const createRegistrationCard = async (
     headshotFile: File,
     ticket: {
-      regId: string
+      regNumber: number
       personName: string
       gender: string
       location: string
@@ -219,181 +240,265 @@ export default function RegistrationPage() {
     }
   ) => {
     const imageBitmap = await createImageBitmap(headshotFile)
+
+    const W = 1600
+    const H = 1020
     const canvas = document.createElement('canvas')
-    canvas.width = 1400
-    canvas.height = 800
+    canvas.width = W
+    canvas.height = H
     const ctx = canvas.getContext('2d')
+    if (!ctx) throw new Error('Could not initialize image renderer.')
 
-    if (!ctx) {
-      throw new Error('Could not initialize image renderer.')
-    }
-
-    const drawRoundedRect = (x: number, y: number, w: number, h: number, r: number) => {
-      const radius = Math.min(r, w / 2, h / 2)
+    const roundRect = (x: number, y: number, w: number, h: number, r: number) => {
+      const rad = Math.min(r, w / 2, h / 2)
       ctx.beginPath()
-      ctx.moveTo(x + radius, y)
-      ctx.arcTo(x + w, y, x + w, y + h, radius)
-      ctx.arcTo(x + w, y + h, x, y + h, radius)
-      ctx.arcTo(x, y + h, x, y, radius)
-      ctx.arcTo(x, y, x + w, y, radius)
+      ctx.moveTo(x + rad, y)
+      ctx.arcTo(x + w, y, x + w, y + h, rad)
+      ctx.arcTo(x + w, y + h, x, y + h, rad)
+      ctx.arcTo(x, y + h, x, y, rad)
+      ctx.arcTo(x, y, x + w, y, rad)
       ctx.closePath()
     }
 
-    // Draw an image into a rectangle without stretching (like CSS `object-fit: cover`).
-    const drawImageCover = (img: ImageBitmap, x: number, y: number, w: number, h: number) => {
-      const srcW = img.width
-      const srcH = img.height
-      const scale = Math.max(w / srcW, h / srcH)
+    const drawCover = (img: ImageBitmap, x: number, y: number, w: number, h: number) => {
+      const scale = Math.max(w / img.width, h / img.height)
       const sw = w / scale
       const sh = h / scale
-      const sx = (srcW - sw) / 2
-      const sy = (srcH - sh) / 2
+      const sx = (img.width - sw) / 2
+      const sy = (img.height - sh) / 2
       ctx.drawImage(img, sx, sy, sw, sh, x, y, w, h)
     }
 
-    const drawSingleLineFitted = (text: string, x: number, y: number, maxWidth: number) => {
-      let out = text
-      while (ctx.measureText(out).width > maxWidth && out.length > 1) {
-        out = `${out.slice(0, -2)}…`
-      }
-      ctx.fillText(out, x, y)
+    const fitText = (text: string, maxW: number): string => {
+      if (ctx.measureText(text).width <= maxW) return text
+      let t = text
+      while (ctx.measureText(`${t}…`).width > maxW && t.length > 1) t = t.slice(0, -1)
+      return `${t}…`
     }
 
-    const drawWrappedLines = (text: string, x: number, y: number, maxWidth: number, lineHeight: number, maxLines: number) => {
-      const words = text.split(' ')
-      const lines: string[] = []
-      let current = ''
-
-      for (const word of words) {
-        const candidate = current ? `${current} ${word}` : word
-        if (ctx.measureText(candidate).width <= maxWidth) {
-          current = candidate
-        } else {
-          if (current) lines.push(current)
-          current = word
-        }
-      }
-      if (current) lines.push(current)
-
-      const capped = lines.slice(0, maxLines)
-      if (lines.length > maxLines) {
-        const last = capped[capped.length - 1] ?? ''
-        capped[capped.length - 1] = `${last.slice(0, Math.max(0, last.length - 1))}…`
-      }
-
-      capped.forEach((line, index) => {
-        ctx.fillText(line, x, y + index * lineHeight)
-      })
+    const fillFitted = (text: string, x: number, y: number, maxW: number) => {
+      ctx.fillText(fitText(text, maxW), x, y)
     }
 
-    // Match the monochrome editorial look of the website.
-    ctx.fillStyle = '#000000'
-    ctx.fillRect(0, 0, canvas.width, canvas.height)
+    const hRule = (x: number, y: number, w: number, alpha = 0.14) => {
+      ctx.save()
+      ctx.strokeStyle = `rgba(255,255,255,${alpha})`
+      ctx.lineWidth = 1
+      ctx.beginPath()
+      ctx.moveTo(x, y)
+      ctx.lineTo(x + w, y)
+      ctx.stroke()
+      ctx.restore()
+    }
 
-    const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height)
-    gradient.addColorStop(0, 'rgba(255, 255, 255, 0.09)')
-    gradient.addColorStop(1, 'rgba(255, 255, 255, 0)')
-    ctx.fillStyle = gradient
-    ctx.fillRect(0, 0, canvas.width, canvas.height)
+    const detail = (
+      label: string,
+      value: string,
+      x: number,
+      y: number,
+      w: number,
+      accent = false
+    ) => {
+      ctx.font = '600 10px "Courier New", monospace'
+      ctx.fillStyle = accent ? 'rgba(255,255,255,0.76)' : 'rgba(255,255,255,0.52)'
+      ctx.fillText(label, x, y)
+      ctx.font = '500 19px "Times New Roman", Georgia, serif'
+      ctx.fillStyle = accent ? '#FFFFFF' : 'rgba(255,255,255,0.92)'
+      fillFitted(value, x, y + 26, w)
+    }
 
-    // Card frame
-    const cardPad = 44
-    drawRoundedRect(cardPad, cardPad, canvas.width - cardPad * 2, canvas.height - cardPad * 2, 28)
-    ctx.fillStyle = 'rgba(255,255,255,0.02)'
-    ctx.fill()
-    ctx.strokeStyle = 'rgba(255,255,255,0.14)'
-    ctx.lineWidth = 2
-    ctx.stroke()
+    ctx.fillStyle = 'rgb(13,13,13)'
+    ctx.fillRect(0, 0, W, H)
 
-    // Vertical divider
-    ctx.fillStyle = 'rgba(255,255,255,0.22)'
-    ctx.fillRect(740, 120, 2, canvas.height - 240)
-
-    // Photo block (cover-cropped + framed)
-    const photoWidth = 450
-    const photoHeight = 520
-    const photoX = 140
-    const photoY = 140
-
-    // Photo background
-    drawRoundedRect(photoX, photoY, photoWidth, photoHeight, 20)
-    ctx.fillStyle = 'rgba(255,255,255,0.03)'
-    ctx.fill()
-    ctx.strokeStyle = 'rgba(255,255,255,0.28)'
-    ctx.lineWidth = 2
-    ctx.stroke()
-
-    // Clip so image is cropped to the rounded rectangle
     ctx.save()
-    drawRoundedRect(photoX, photoY, photoWidth, photoHeight, 20)
-    ctx.clip()
-    drawImageCover(imageBitmap, photoX, photoY, photoWidth, photoHeight)
+    ctx.globalAlpha = 0.015
+    for (let i = 0; i < 3000; i += 1) {
+      ctx.fillStyle = '#FFFFFF'
+      ctx.fillRect(Math.random() * W, Math.random() * H, 1, 1)
+    }
     ctx.restore()
 
-    // Header
+    const PAD = 34
+    roundRect(PAD, PAD, W - PAD * 2, H - PAD * 2, 24)
+    ctx.fillStyle = 'rgba(13,13,13,0.92)'
+    ctx.fill()
+    ctx.strokeStyle = 'rgba(255,255,255,0.14)'
+    ctx.lineWidth = 1.2
+    ctx.stroke()
+
+    const photoX = 74
+    const photoY = 74
+    const photoW = 520
+    const photoH = H - 148
+
+    roundRect(photoX, photoY, photoW, photoH, 20)
+    ctx.fillStyle = 'rgba(255,255,255,0.04)'
+    ctx.fill()
+    ctx.strokeStyle = 'rgba(255,255,255,0.34)'
+    ctx.lineWidth = 1.4
+    ctx.stroke()
+
+    ctx.save()
+    roundRect(photoX, photoY, photoW, photoH, 20)
+    ctx.clip()
+    drawCover(imageBitmap, photoX, photoY, photoW, photoH)
+    const vignette = ctx.createRadialGradient(
+      photoX + photoW / 2,
+      photoY + photoH * 0.4,
+      photoH * 0.16,
+      photoX + photoW / 2,
+      photoY + photoH / 2,
+      photoH * 0.85
+    )
+    vignette.addColorStop(0, 'rgba(0,0,0,0)')
+    vignette.addColorStop(1, 'rgba(0,0,0,0.58)')
+    ctx.fillStyle = vignette
+    ctx.fillRect(photoX, photoY, photoW, photoH)
+    ctx.restore()
+
+    ctx.fillStyle = 'rgba(210,210,210,0.82)'
+    ctx.fillRect(photoX + 18, photoY + photoH - 14, photoW - 36, 4)
+
+    const panelX = photoX + photoW + 54
+    const panelW = W - panelX - 74
+    let y = 92
+
+    roundRect(panelX - 18, photoY, panelW + 18, photoH, 20)
+    ctx.fillStyle = 'rgba(20,20,20,0.52)'
+    ctx.fill()
+    ctx.strokeStyle = 'rgba(255,255,255,0.08)'
+    ctx.stroke()
+
+    ctx.font = '500 11px "Courier New", monospace'
+    ctx.fillStyle = 'rgba(255,255,255,0.72)'
+    ctx.fillText('LAW MODELS ACADEMY / MASTERCLASS PASS', panelX, y)
+    y += 18
+
+    hRule(panelX, y, panelW, 0.2)
+    y += 74
+
+    ctx.font = '800 96px Georgia, "Times New Roman", serif'
     ctx.fillStyle = '#FFFFFF'
-    ctx.font = '700 84px Georgia, serif'
-    ctx.fillText('LAW', 740, 190)
+    ctx.fillText('LAW', panelX, y)
+    y += 34
 
-    ctx.fillStyle = 'rgba(255,255,255,0.66)'
-    ctx.font = '300 26px Inter, Arial, sans-serif'
-    ctx.fillText('MASTERCLASS REGISTRATION', 740, 230)
+    ctx.font = '400 18px "Courier New", monospace'
+    ctx.fillStyle = 'rgba(255,255,255,0.78)'
+    ctx.fillText('MASTERCLASS CREDENTIAL', panelX + 5, y)
+    y += 58
 
-    // Name block
+    hRule(panelX, y, panelW, 0.16)
+    y += 50
+
+    ctx.font = '700 47px Georgia, "Times New Roman", serif'
     ctx.fillStyle = '#FFFFFF'
-    ctx.font = '600 44px Georgia, serif'
-    drawSingleLineFitted(ticket.personName.toUpperCase(), 740, 330, 560)
+    const nameUpper = ticket.personName.toUpperCase()
+    fillFitted(nameUpper, panelX, y, panelW)
+    const nameW = Math.min(ctx.measureText(nameUpper).width, panelW)
+    y += 15
 
-    // Details section
-    ctx.fillStyle = 'rgba(255,255,255,0.82)'
-    ctx.font = '700 20px Inter, Arial, sans-serif'
-    drawSingleLineFitted(`REG ID: ${ticket.regId}`, 740, 380, 560)
+    ctx.save()
+    ctx.strokeStyle = 'rgba(255,255,255,0.72)'
+    ctx.lineWidth = 2
+    ctx.beginPath()
+    ctx.moveTo(panelX, y)
+    ctx.lineTo(panelX + nameW, y)
+    ctx.stroke()
+    ctx.restore()
+    y += 42
 
-    ctx.fillStyle = 'rgba(255,255,255,0.70)'
-    ctx.font = '300 20px Inter, Arial, sans-serif'
-    drawSingleLineFitted(`GENDER: ${ticket.gender}`, 740, 416, 560)
-    drawSingleLineFitted(`CITY: ${ticket.cityState}`, 740, 448, 560)
-    drawSingleLineFitted(`PHONE: ${ticket.phone}`, 740, 480, 560)
-    drawSingleLineFitted(`AGE: ${ticket.age}`, 740, 512, 560)
+    const regNo = String(ticket.regNumber).padStart(8, '0')
+    const col2 = panelX + panelW / 2 + 10
+    const halfW = panelW / 2 - 18
+    const rowGap = 56
 
-    // Modeling profile panel
-    drawRoundedRect(740, 548, canvas.width - 740 - cardPad, 178, 18)
+    detail('REG NUMBER', `#${regNo}`, panelX, y, halfW, true)
+    detail('LOCATION', ticket.location.toUpperCase(), col2, y, halfW)
+    y += rowGap
+
+    detail('AGE', ticket.age, panelX, y, halfW)
+    detail('GENDER', ticket.gender, col2, y, halfW)
+    y += rowGap
+
+    detail('CITY / STATE', ticket.cityState, panelX, y, panelW)
+    y += rowGap
+
+    detail('PHONE', ticket.phone, panelX, y, panelW)
+    y += 56
+
+    hRule(panelX, y, panelW, 0.14)
+    y += 28
+
+    ctx.font = '600 11px "Courier New", monospace'
+    ctx.fillStyle = 'rgba(255,255,255,0.74)'
+    ctx.fillText('MODEL PROFILE MATRIX', panelX, y)
+    y += 20
+
+    const matrixH = 184
+    roundRect(panelX, y, panelW, matrixH, 14)
     ctx.fillStyle = 'rgba(255,255,255,0.03)'
     ctx.fill()
-    ctx.strokeStyle = 'rgba(255,255,255,0.12)'
+    ctx.strokeStyle = 'rgba(255,255,255,0.09)'
     ctx.lineWidth = 1
     ctx.stroke()
 
-    ctx.fillStyle = '#FFFFFF'
-    ctx.font = '700 18px Inter, Arial, sans-serif'
-    ctx.fillText('MODELING PROFILE', 780, 580)
+    const statCols = 3
+    const statW = panelW / statCols
+    const stats = [
+      { label: 'HEIGHT', value: `${ticket.heightValue} ${ticket.heightUnit.toUpperCase()}` },
+      { label: 'WEIGHT', value: `${ticket.weightValue} ${ticket.weightUnit.toUpperCase()}` },
+      { label: 'SHOE SIZE', value: ticket.shoeSize },
+      { label: 'BUST/CHEST', value: `${ticket.bustChestValue} ${ticket.bustChestUnit.toUpperCase()}` },
+      { label: 'WAIST', value: `${ticket.waistValue} ${ticket.waistUnit.toUpperCase()}` },
+      { label: 'HIPS', value: `${ticket.hipsValue} ${ticket.hipsUnit.toUpperCase()}` },
+    ]
 
-    ctx.fillStyle = 'rgba(255,255,255,0.72)'
-    ctx.font = '300 16px Inter, Arial, sans-serif'
-    drawSingleLineFitted(
-      `Height: ${ticket.heightValue} ${ticket.heightUnit.toUpperCase()} | Weight: ${ticket.weightValue} ${ticket.weightUnit.toUpperCase()}`,
-      780,
-      606,
-      500
+    stats.forEach((s, i) => {
+      const col = i % statCols
+      const row = Math.floor(i / statCols)
+      const sx = panelX + col * statW + 18
+      const sy = y + 42 + row * 72
+
+      ctx.font = '700 24px Georgia, "Times New Roman", serif'
+      ctx.fillStyle = '#FFFFFF'
+      fillFitted(s.value, sx, sy, statW - 28)
+
+      ctx.font = '500 10px "Courier New", monospace'
+      ctx.fillStyle = 'rgba(220,220,220,0.72)'
+      ctx.fillText(s.label, sx, sy + 18)
+    })
+
+    for (let c = 1; c < statCols; c++) {
+      ctx.save()
+      ctx.strokeStyle = 'rgba(255,255,255,0.07)'
+      ctx.lineWidth = 1
+      ctx.beginPath()
+      ctx.moveTo(panelX + c * statW, y + 16)
+      ctx.lineTo(panelX + c * statW, y + matrixH - 16)
+      ctx.stroke()
+      ctx.restore()
+    }
+
+    y += matrixH + 34
+
+    hRule(panelX, y, panelW, 0.1)
+    y += 24
+
+    ctx.font = '400 13px "Courier New", monospace'
+    ctx.fillStyle = 'rgba(255,255,255,0.42)'
+    fillFitted(
+      `MASTERCLASS: ${ticket.location.toUpperCase()}  •  ${new Date()
+        .toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+        .toUpperCase()}`,
+      panelX,
+      y,
+      panelW
     )
-    drawSingleLineFitted(
-      `Bust/Chest: ${ticket.bustChestValue} ${ticket.bustChestUnit.toUpperCase()} | Waist: ${ticket.waistValue} ${ticket.waistUnit.toUpperCase()}`,
-      780,
-      632,
-      500
-    )
+    y += 26
 
-    const hipsLine = ticket.hipsConverted
-      ? `Hips: ${ticket.hipsValue} ${ticket.hipsUnit.toUpperCase()} (${ticket.hipsConverted})`
-      : `Hips: ${ticket.hipsValue} ${ticket.hipsUnit.toUpperCase()}`
-    drawSingleLineFitted(hipsLine, 780, 658, 500)
-    drawSingleLineFitted(`Shoe Size: ${ticket.shoeSize}`, 780, 684, 500)
-
-    // Footer
-    ctx.fillStyle = 'rgba(255,255,255,0.55)'
-    ctx.font = '300 16px Inter, Arial, sans-serif'
-    drawSingleLineFitted(`MASTERCLASS: ${ticket.location.toUpperCase()} • ${new Date().toLocaleDateString()}`, 740, 730, 560)
-    drawWrappedLines(`VENUE: ${ticket.address}`, 740, 752, 560, 18, 2)
+    ctx.font = '400 13px "Courier New", monospace'
+    ctx.fillStyle = 'rgba(230,230,230,0.52)'
+    fillFitted(`VENUE: ${ticket.address}`, panelX, y, panelW)
 
     return canvas.toDataURL('image/png')
   }
@@ -446,23 +551,42 @@ export default function RegistrationPage() {
 
       payload.append('consentPhotoVideo', consentPhotoVideo)
       payload.append('referralSource', referralSource)
+      payload.append('enrollmentTracks', enrollmentTracks.join(','))
+      payload.append('planType', planType)
+      payload.append('customPlanName', customPlanName)
+      payload.append('totalDue', totalDue)
+      payload.append('amountPaid', amountPaid)
+      payload.append('dueDate', dueDate)
+      payload.append('monthlyEnabled', monthlyEnabled ? 'true' : 'false')
+      payload.append('monthlyAmount', monthlyAmount)
+      payload.append('scholarshipType', scholarshipType)
+      payload.append('scholarshipPercent', scholarshipPercent)
+      payload.append('locationMode', locationMode)
+      payload.append('customLocationText', customLocationText)
 
       payload.append('headshot', headshot)
       payload.append('fullBody', fullBody)
       if (walkVideo) payload.append('walkVideo', walkVideo)
 
+      const supabase = getSupabaseBrowser()
+      const sessionRes = supabase ? await supabase.auth.getSession() : null
+      const accessToken = sessionRes?.data.session?.access_token ?? null
+
       const response = await fetch('/api/registration', {
         method: 'POST',
+        headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined,
         body: payload,
       })
 
       const data = (await response.json()) as
         | RegistrationResponse
-        | { error: string; details?: string }
+        | { error?: string; details?: string }
 
       if (!response.ok) {
-        const errData = data as { error?: string }
-        throw new Error(errData.error || 'Could not complete registration.')
+        const errData = data as { error?: string; details?: string }
+        const baseMessage = errData.error || 'Could not complete registration.'
+        const detailsMessage = errData.details ? ` Details: ${errData.details}` : ''
+        throw new Error(`${baseMessage}${detailsMessage}`)
       }
 
       if (!('success' in data)) {
@@ -471,7 +595,7 @@ export default function RegistrationPage() {
 
       setSuccessData(data.registration)
       const card = await createRegistrationCard(headshot, {
-        regId: data.registration.id,
+        regNumber: data.registration.regNumber,
         personName: data.registration.fullName,
         gender,
         location: data.registration.location,
@@ -797,6 +921,66 @@ export default function RegistrationPage() {
                 </div>
 
                 <div className="space-y-5">
+                  <h4 className="editorial-text text-2xl text-luxury-black">Student Plan & Enrollment</h4>
+                  <div className="space-y-3">
+                    <p className="block text-sm text-luxury-black/60 tracking-wider uppercase thin-text">Enrollment tracks</p>
+                    <div className="flex flex-wrap gap-2">
+                      {['catwalk', 'online', 'both', 'portfolio_editorial'].map((track) => {
+                        const active = enrollmentTracks.includes(track)
+                        return (
+                          <button
+                            key={track}
+                            type="button"
+                            onClick={() => toggleTrack(track)}
+                            className={`px-3 py-2 border text-xs uppercase tracking-wider thin-text ${
+                              active ? 'bg-luxury-black text-luxury-white border-luxury-black' : 'border-luxury-black/20 text-luxury-black'
+                            }`}
+                          >
+                            {track.replace('_', '/')}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm text-luxury-black/60 tracking-wider uppercase mb-2 thin-text">Plan Type</label>
+                      <select value={planType} onChange={(e) => setPlanType(e.target.value as (typeof PLAN_TYPES)[number])} className="w-full px-4 py-3 bg-luxury-white border border-luxury-black/20 focus:border-luxury-black focus:outline-none">
+                        {PLAN_TYPES.map((entry) => <option key={entry} value={entry}>{entry}</option>)}
+                      </select>
+                    </div>
+                    <input value={customPlanName} onChange={(e) => setCustomPlanName(e.target.value)} placeholder="Custom plan name (optional)" className="w-full px-4 py-3 bg-luxury-white border border-luxury-black/20 focus:border-luxury-black focus:outline-none" />
+                    <input value={totalDue} onChange={(e) => setTotalDue(e.target.value)} placeholder="Total due (NGN)" className="w-full px-4 py-3 bg-luxury-white border border-luxury-black/20 focus:border-luxury-black focus:outline-none" />
+                    <input value={amountPaid} onChange={(e) => setAmountPaid(e.target.value)} placeholder="Amount paid (NGN)" className="w-full px-4 py-3 bg-luxury-white border border-luxury-black/20 focus:border-luxury-black focus:outline-none" />
+                    <div>
+                      <label className="block text-sm text-luxury-black/60 tracking-wider uppercase mb-2 thin-text">Scholarship type</label>
+                      <select value={scholarshipType} onChange={(e) => setScholarshipType(e.target.value as (typeof SCHOLARSHIP_TYPES)[number])} className="w-full px-4 py-3 bg-luxury-white border border-luxury-black/20 focus:border-luxury-black focus:outline-none">
+                        {SCHOLARSHIP_TYPES.map((entry) => <option key={entry} value={entry}>{entry}</option>)}
+                      </select>
+                    </div>
+                    <input value={scholarshipPercent} onChange={(e) => setScholarshipPercent(e.target.value)} placeholder="Scholarship percent (if percentage)" className="w-full px-4 py-3 bg-luxury-white border border-luxury-black/20 focus:border-luxury-black focus:outline-none" />
+                    <div>
+                      <label className="block text-sm text-luxury-black/60 tracking-wider uppercase mb-2 thin-text">Due date</label>
+                      <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} className="w-full px-4 py-3 bg-luxury-white border border-luxury-black/20 focus:border-luxury-black focus:outline-none" />
+                    </div>
+                    <div>
+                      <label className="block text-sm text-luxury-black/60 tracking-wider uppercase mb-2 thin-text">Location mode</label>
+                      <select value={locationMode} onChange={(e) => setLocationMode(e.target.value as (typeof LOCATION_MODES)[number])} className="w-full px-4 py-3 bg-luxury-white border border-luxury-black/20 focus:border-luxury-black focus:outline-none">
+                        {LOCATION_MODES.map((entry) => <option key={entry} value={entry}>{entry}</option>)}
+                      </select>
+                    </div>
+                    <input value={customLocationText} onChange={(e) => setCustomLocationText(e.target.value)} placeholder="Custom location text (optional)" className="md:col-span-2 w-full px-4 py-3 bg-luxury-white border border-luxury-black/20 focus:border-luxury-black focus:outline-none" />
+                    <label className="md:col-span-2 flex items-center gap-2 thin-text text-luxury-black">
+                      <input type="checkbox" checked={monthlyEnabled} onChange={(e) => setMonthlyEnabled(e.target.checked)} />
+                      Enable monthly installment
+                    </label>
+                    {monthlyEnabled ? (
+                      <input value={monthlyAmount} onChange={(e) => setMonthlyAmount(e.target.value)} placeholder="Monthly amount (NGN)" className="md:col-span-2 w-full px-4 py-3 bg-luxury-white border border-luxury-black/20 focus:border-luxury-black focus:outline-none" />
+                    ) : null}
+                  </div>
+                </div>
+
+                <div className="space-y-5">
                   <h4 className="editorial-text text-2xl text-luxury-black">Uploads</h4>
                   <div className="grid md:grid-cols-2 gap-6">
                     <div>
@@ -871,7 +1055,7 @@ export default function RegistrationPage() {
             <div className="space-y-2">
               <p className="editorial-text text-3xl text-luxury-black">Your Ticket</p>
               <p className="thin-text text-luxury-black/70">
-                Registration ID: <span className="font-medium">{successData.id}</span>
+                Reg Number: <span className="font-medium">{String(successData.regNumber).padStart(8, '0')}</span>
               </p>
               <p className="thin-text text-luxury-black/70">
                 Venue:{' '}

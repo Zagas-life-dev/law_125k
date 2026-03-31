@@ -62,6 +62,7 @@ export async function GET(req: Request) {
         'full_body_url',
         'walk_video_url',
         'created_at',
+        'reg_number',
       ].join(', ')
     )
     .order('created_at', { ascending: false })

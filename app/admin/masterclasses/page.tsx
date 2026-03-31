@@ -43,7 +43,38 @@ type MasterclassRegistration = {
   full_body_url: string | null
   walk_video_url: string | null
   created_at: string
+  reg_number: number
 }
+
+type TicketCardApiResponse =
+  | {
+      success: true
+      data: {
+        registrationId: string
+        regNumber: number
+        fullName: string
+        gender: string
+        location: 'Abuja' | 'Lagos'
+        cityState: string
+        phone: string
+        age: number
+        heightValue: string
+        heightUnit: string
+        weightValue: string
+        weightUnit: string
+        bustChestValue: string
+        bustChestUnit: string
+        waistValue: string
+        waistUnit: string
+        hipsValue: string
+        hipsUnit: string
+        hipsConverted: string | null
+        shoeSize: string
+        address: string
+        issuedOn: string
+      }
+    }
+  | { success: false; error: { code: string; message: string; details?: string } }
 
 export default function AdminMasterclassesPage() {
   const router = useRouter()
@@ -52,8 +83,13 @@ export default function AdminMasterclassesPage() {
   const [error, setError] = useState('')
   const [query, setQuery] = useState('')
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [generatingTicketId, setGeneratingTicketId] = useState<string | null>(null)
   const [selected, setSelected] = useState<MasterclassRegistration | null>(null)
   const [isViewOpen, setIsViewOpen] = useState(false)
+  const [isTicketPreviewOpen, setIsTicketPreviewOpen] = useState(false)
+  const [ticketPreviewDataUrl, setTicketPreviewDataUrl] = useState('')
+  const [ticketPreviewName, setTicketPreviewName] = useState('')
+  const [ticketPreviewRegNumber, setTicketPreviewRegNumber] = useState<number | null>(null)
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -63,7 +99,7 @@ export default function AdminMasterclassesPage() {
         r.full_name.toLowerCase().includes(q) ||
         (r.email ?? '').toLowerCase().includes(q) ||
         r.phone.toLowerCase().includes(q) ||
-        r.id.toLowerCase().includes(q)
+        r.reg_number.toString().toLowerCase().includes(q)
       )
     })
   }, [query, registrations])
@@ -140,9 +176,298 @@ export default function AdminMasterclassesPage() {
     router.push('/admin/login')
   }
 
+  const createTicketCardImage = async (
+    ticket: Extract<TicketCardApiResponse, { success: true }>['data'],
+    headshotUrl?: string | null
+  ) => {
+    const W = 1600
+    const H = 1020
+    const canvas = document.createElement('canvas')
+    canvas.width = W
+    canvas.height = H
+    const ctx = canvas.getContext('2d')
+    if (!ctx) throw new Error('Could not initialize image renderer.')
+
+    const roundRect = (x: number, y: number, w: number, h: number, r: number) => {
+      const rad = Math.min(r, w / 2, h / 2)
+      ctx.beginPath()
+      ctx.moveTo(x + rad, y)
+      ctx.arcTo(x + w, y, x + w, y + h, rad)
+      ctx.arcTo(x + w, y + h, x, y + h, rad)
+      ctx.arcTo(x, y + h, x, y, rad)
+      ctx.arcTo(x, y, x + w, y, rad)
+      ctx.closePath()
+    }
+
+    const drawCover = (img: ImageBitmap, x: number, y: number, w: number, h: number) => {
+      const scale = Math.max(w / img.width, h / img.height)
+      const sw = w / scale
+      const sh = h / scale
+      const sx = (img.width - sw) / 2
+      const sy = (img.height - sh) / 2
+      ctx.drawImage(img, sx, sy, sw, sh, x, y, w, h)
+    }
+
+    const fitText = (text: string, maxW: number): string => {
+      if (ctx.measureText(text).width <= maxW) return text
+      let t = text
+      while (ctx.measureText(`${t}...`).width > maxW && t.length > 1) t = t.slice(0, -1)
+      return `${t}...`
+    }
+
+    const fillFitted = (text: string, x: number, y: number, maxW: number) => {
+      ctx.fillText(fitText(text, maxW), x, y)
+    }
+
+    let imageBitmap: ImageBitmap | null = null
+    if (headshotUrl) {
+      try {
+        const imageResponse = await fetch(headshotUrl)
+        if (imageResponse.ok) {
+          const blob = await imageResponse.blob()
+          imageBitmap = await createImageBitmap(blob)
+        }
+      } catch {
+        imageBitmap = null
+      }
+    }
+
+    ctx.fillStyle = 'rgb(13,13,13)'
+    ctx.fillRect(0, 0, W, H)
+
+    const PAD = 34
+    roundRect(PAD, PAD, W - PAD * 2, H - PAD * 2, 24)
+    ctx.fillStyle = 'rgba(13,13,13,0.92)'
+    ctx.fill()
+    ctx.strokeStyle = 'rgba(255,255,255,0.14)'
+    ctx.lineWidth = 1.2
+    ctx.stroke()
+
+    const photoX = 74
+    const photoY = 74
+    const photoW = 520
+    const photoH = H - 148
+    roundRect(photoX, photoY, photoW, photoH, 20)
+    ctx.fillStyle = 'rgba(255,255,255,0.04)'
+    ctx.fill()
+    ctx.strokeStyle = 'rgba(255,255,255,0.34)'
+    ctx.lineWidth = 1.4
+    ctx.stroke()
+
+    ctx.save()
+    roundRect(photoX, photoY, photoW, photoH, 20)
+    ctx.clip()
+    if (imageBitmap) {
+      drawCover(imageBitmap, photoX, photoY, photoW, photoH)
+    } else {
+      ctx.fillStyle = 'rgba(40,40,40,1)'
+      ctx.fillRect(photoX, photoY, photoW, photoH)
+      ctx.fillStyle = 'rgba(255,255,255,0.45)'
+      ctx.font = '600 20px "Courier New", monospace'
+      ctx.fillText('NO HEADSHOT', photoX + 34, photoY + 56)
+    }
+    ctx.restore()
+
+    ctx.fillStyle = 'rgba(210,210,210,0.82)'
+    ctx.fillRect(photoX + 18, photoY + photoH - 14, photoW - 36, 4)
+
+    const panelX = photoX + photoW + 54
+    const panelW = W - panelX - 74
+    let y = 92
+    roundRect(panelX - 18, photoY, panelW + 18, photoH, 20)
+    ctx.fillStyle = 'rgba(20,20,20,0.52)'
+    ctx.fill()
+    ctx.strokeStyle = 'rgba(255,255,255,0.08)'
+    ctx.stroke()
+
+    ctx.font = '500 11px "Courier New", monospace'
+    ctx.fillStyle = 'rgba(255,255,255,0.72)'
+    ctx.fillText('LAW MODELS ACADEMY / MASTERCLASS PASS', panelX, y)
+    y += 18
+    ctx.strokeStyle = 'rgba(255,255,255,0.2)'
+    ctx.lineWidth = 1
+    ctx.beginPath()
+    ctx.moveTo(panelX, y)
+    ctx.lineTo(panelX + panelW, y)
+    ctx.stroke()
+    y += 74
+
+    ctx.font = '800 96px Georgia, "Times New Roman", serif'
+    ctx.fillStyle = '#FFFFFF'
+    ctx.fillText('LAW', panelX, y)
+    y += 34
+
+    ctx.font = '400 18px "Courier New", monospace'
+    ctx.fillStyle = 'rgba(255,255,255,0.78)'
+    ctx.fillText('MASTERCLASS CREDENTIAL', panelX + 5, y)
+    y += 58
+
+    ctx.strokeStyle = 'rgba(255,255,255,0.16)'
+    ctx.beginPath()
+    ctx.moveTo(panelX, y)
+    ctx.lineTo(panelX + panelW, y)
+    ctx.stroke()
+    y += 50
+
+    ctx.font = '700 47px Georgia, "Times New Roman", serif'
+    ctx.fillStyle = '#FFFFFF'
+    const nameUpper = ticket.fullName.toUpperCase()
+    fillFitted(nameUpper, panelX, y, panelW)
+    const nameW = Math.min(ctx.measureText(nameUpper).width, panelW)
+    y += 15
+    ctx.strokeStyle = 'rgba(255,255,255,0.72)'
+    ctx.lineWidth = 2
+    ctx.beginPath()
+    ctx.moveTo(panelX, y)
+    ctx.lineTo(panelX + nameW, y)
+    ctx.stroke()
+    y += 42
+
+    const regNo = String(ticket.regNumber).padStart(8, '0')
+    const col2 = panelX + panelW / 2 + 10
+    const halfW = panelW / 2 - 18
+    const rowGap = 56
+    const detail = (label: string, value: string, x: number, yy: number, w: number, accent = false) => {
+      ctx.font = '600 10px "Courier New", monospace'
+      ctx.fillStyle = accent ? 'rgba(255,255,255,0.76)' : 'rgba(255,255,255,0.52)'
+      ctx.fillText(label, x, yy)
+      ctx.font = '500 19px "Times New Roman", Georgia, serif'
+      ctx.fillStyle = accent ? '#FFFFFF' : 'rgba(255,255,255,0.92)'
+      fillFitted(value, x, yy + 26, w)
+    }
+
+    detail('REG NUMBER', `#${regNo}`, panelX, y, halfW, true)
+    detail('LOCATION', ticket.location.toUpperCase(), col2, y, halfW)
+    y += rowGap
+    detail('AGE', String(ticket.age), panelX, y, halfW)
+    detail('GENDER', ticket.gender, col2, y, halfW)
+    y += rowGap
+    detail('CITY / STATE', ticket.cityState, panelX, y, panelW)
+    y += rowGap
+    detail('PHONE', ticket.phone, panelX, y, panelW)
+    y += 56
+
+    ctx.strokeStyle = 'rgba(255,255,255,0.14)'
+    ctx.lineWidth = 1
+    ctx.beginPath()
+    ctx.moveTo(panelX, y)
+    ctx.lineTo(panelX + panelW, y)
+    ctx.stroke()
+    y += 28
+
+    ctx.font = '600 11px "Courier New", monospace'
+    ctx.fillStyle = 'rgba(255,255,255,0.74)'
+    ctx.fillText('MODEL PROFILE MATRIX', panelX, y)
+    y += 20
+
+    const matrixH = 184
+    roundRect(panelX, y, panelW, matrixH, 14)
+    ctx.fillStyle = 'rgba(255,255,255,0.03)'
+    ctx.fill()
+    ctx.strokeStyle = 'rgba(255,255,255,0.09)'
+    ctx.stroke()
+
+    const statCols = 3
+    const statW = panelW / statCols
+    const stats = [
+      { label: 'HEIGHT', value: `${ticket.heightValue} ${ticket.heightUnit.toUpperCase()}` },
+      { label: 'WEIGHT', value: `${ticket.weightValue} ${ticket.weightUnit.toUpperCase()}` },
+      { label: 'SHOE SIZE', value: ticket.shoeSize },
+      { label: 'BUST/CHEST', value: `${ticket.bustChestValue} ${ticket.bustChestUnit.toUpperCase()}` },
+      { label: 'WAIST', value: `${ticket.waistValue} ${ticket.waistUnit.toUpperCase()}` },
+      { label: 'HIPS', value: `${ticket.hipsValue} ${ticket.hipsUnit.toUpperCase()}` },
+    ]
+    stats.forEach((s, i) => {
+      const col = i % statCols
+      const row = Math.floor(i / statCols)
+      const sx = panelX + col * statW + 18
+      const sy = y + 42 + row * 72
+      ctx.font = '700 24px Georgia, "Times New Roman", serif'
+      ctx.fillStyle = '#FFFFFF'
+      fillFitted(s.value, sx, sy, statW - 28)
+      ctx.font = '500 10px "Courier New", monospace'
+      ctx.fillStyle = 'rgba(220,220,220,0.72)'
+      ctx.fillText(s.label, sx, sy + 18)
+    })
+
+    y += matrixH + 34
+    ctx.strokeStyle = 'rgba(255,255,255,0.1)'
+    ctx.beginPath()
+    ctx.moveTo(panelX, y)
+    ctx.lineTo(panelX + panelW, y)
+    ctx.stroke()
+    y += 24
+
+    ctx.font = '400 13px "Courier New", monospace'
+    ctx.fillStyle = 'rgba(255,255,255,0.42)'
+    fillFitted(
+      `MASTERCLASS: ${ticket.location.toUpperCase()}  •  ${new Date(ticket.issuedOn)
+        .toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+        .toUpperCase()}`,
+      panelX,
+      y,
+      panelW
+    )
+    y += 26
+    ctx.font = '400 13px "Courier New", monospace'
+    ctx.fillStyle = 'rgba(230,230,230,0.52)'
+    fillFitted(`VENUE: ${ticket.address}`, panelX, y, panelW)
+
+    return canvas.toDataURL('image/png')
+  }
+
+  const handleDownloadPreviewTicket = () => {
+    if (!ticketPreviewDataUrl || ticketPreviewRegNumber === null) return
+    const link = document.createElement('a')
+    link.href = ticketPreviewDataUrl
+    link.download = `law-masterclass-${String(ticketPreviewRegNumber).padStart(8, '0')}.png`
+    link.click()
+  }
+
+  const handleGenerateTicket = async (registration: MasterclassRegistration) => {
+    setError('')
+    setGeneratingTicketId(registration.id)
+
+    try {
+      const supabase = getSupabaseBrowser()
+      if (!supabase) throw new Error('Missing Supabase env vars. Add NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY in .env.local.')
+
+      const sessionRes = await supabase.auth.getSession()
+      const accessToken = sessionRes.data.session?.access_token
+      if (!accessToken) throw new Error('Session expired. Please log in again.')
+
+      const res = await fetch('/api/admin/ticket-card', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({ registrationId: registration.id }),
+      })
+
+      const json = (await res.json()) as TicketCardApiResponse
+      if (!res.ok || !json.success) {
+        const errorMessage =
+          !json.success ? `${json.error.message}${json.error.details ? ` (${json.error.details})` : ''}` : 'Ticket generation failed.'
+        throw new Error(errorMessage)
+      }
+
+      const previewDataUrl = await createTicketCardImage(json.data, registration.headshot_url)
+      setTicketPreviewDataUrl(previewDataUrl)
+      setTicketPreviewName(json.data.fullName)
+      setTicketPreviewRegNumber(json.data.regNumber)
+      setIsTicketPreviewOpen(true)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Ticket generation failed.')
+    } finally {
+      setGeneratingTicketId(null)
+    }
+  }
+
   const navItems = [
     { href: '/admin', label: 'Dashboard' },
     { href: '/admin/masterclasses', label: 'Masterclasses' },
+    { href: '/admin/students', label: 'Students' },
   ]
 
   const openView = (r: MasterclassRegistration) => {
@@ -268,7 +593,7 @@ export default function AdminMasterclassesPage() {
                           <span className="thin-text">{r.age}</span>
                         </td>
                         <td className="px-5 py-4">
-                          <span className="thin-text">{r.id}</span>
+                          <span className="thin-text">{r.reg_number}</span>
                         </td>
                         <td className="px-5 py-4">
                           <span className="thin-text">{new Date(r.created_at).toLocaleDateString()}</span>
@@ -281,6 +606,14 @@ export default function AdminMasterclassesPage() {
                               className="px-4 py-2 border border-luxury-black/20 bg-white/50 text-luxury-black thin-text tracking-wider uppercase disabled:opacity-50"
                             >
                               View
+                            </button>
+                            <button
+                              type="button"
+                              disabled={generatingTicketId === r.id}
+                              onClick={() => void handleGenerateTicket(r)}
+                              className="px-4 py-2 border border-luxury-black/20 bg-white/50 text-luxury-black thin-text tracking-wider uppercase disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              {generatingTicketId === r.id ? 'Generating...' : '+Ticket'}
                             </button>
                             <button
                               type="button"
@@ -497,6 +830,51 @@ export default function AdminMasterclassesPage() {
                   </div>
                 </section>
               </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {isTicketPreviewOpen && ticketPreviewDataUrl ? (
+        <div
+          className="fixed inset-0 z-[220] bg-black/70 flex items-center justify-center p-6"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Ticket preview modal"
+          onMouseDown={(e) => {
+            if (e.target === e.currentTarget) setIsTicketPreviewOpen(false)
+          }}
+        >
+          <div className="w-full max-w-5xl bg-luxury-white border border-luxury-black/20 p-6 md:p-8 space-y-5">
+            <div className="space-y-1">
+              <p className="editorial-text text-3xl text-luxury-black">Ticket Preview</p>
+              <p className="thin-text text-luxury-black/70">
+                {ticketPreviewName} • Reg No:{' '}
+                <span className="font-medium">
+                  {ticketPreviewRegNumber !== null ? String(ticketPreviewRegNumber).padStart(8, '0') : '-'}
+                </span>
+              </p>
+            </div>
+
+            <div className="relative w-full aspect-[16/10] border border-luxury-black/20 bg-luxury-white">
+              <Image src={ticketPreviewDataUrl} alt="Generated ticket preview" fill className="object-contain" unoptimized />
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3 justify-end">
+              <button
+                type="button"
+                onClick={() => setIsTicketPreviewOpen(false)}
+                className="px-8 py-3 border border-luxury-black/30 text-luxury-black thin-text tracking-wider uppercase"
+              >
+                Close
+              </button>
+              <button
+                type="button"
+                onClick={handleDownloadPreviewTicket}
+                className="px-8 py-3 bg-luxury-black text-luxury-white thin-text tracking-wider uppercase"
+              >
+                Download Ticket
+              </button>
             </div>
           </div>
         </div>
