@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Inter, Cormorant_Garamond, Cormorant_Upright } from 'next/font/google'
 import './globals.css'
 import CustomCursor from '@/components/CustomCursor'
@@ -26,6 +26,24 @@ const cormorantUpright = Cormorant_Upright({
 export const metadata: Metadata = {
   title: 'LAW Model Academy | Larry Walker Model Academy',
   description: 'High-fashion modeling academy with cinematic, editorial excellence',
+  manifest: '/manifest.webmanifest',
+  applicationName: 'LAW Model Academy',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'LAW Academy',
+  },
+  icons: {
+    icon: [
+      { url: '/icons/icon-192.svg', type: 'image/svg+xml' },
+      { url: '/icons/icon-512.svg', type: 'image/svg+xml' },
+    ],
+    apple: [{ url: '/icons/icon-192.svg', type: 'image/svg+xml' }],
+  },
+}
+
+export const viewport: Viewport = {
+  themeColor: '#0d0d0d',
 }
 
 export default function RootLayout({

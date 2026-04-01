@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { getSupabaseBrowser } from '@/lib/supabaseBrowser'
 import { CiGrid41, CiLogout, CiShoppingTag, CiUser } from 'react-icons/ci'
+import InstallAppPrompt from '@/components/InstallAppPrompt'
 
 type MeResponse = { isAdmin: boolean; userId?: string; email?: string; reason?: string }
 
@@ -82,6 +83,7 @@ export default function AdminDashboardPage() {
 
   return (
     <main className="bg-luxury-white min-h-screen">
+      <InstallAppPrompt />
       {/* Desktop sidebar */}
       <div className="hidden md:block fixed top-0 left-0 h-screen w-72 bg-white/70 backdrop-blur border-r border-luxury-black/10 z-[50]">
         <div className="p-6 space-y-6">

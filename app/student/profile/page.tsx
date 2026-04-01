@@ -6,6 +6,8 @@ import Link from 'next/link'
 import { getSupabaseBrowser } from '@/lib/supabaseBrowser'
 import type { StudentApiError, StudentApiSuccess, StudentDetail } from '@/lib/studentModels'
 import { CiBank, CiCalendarDate, CiCircleList, CiLocationOn, CiUser } from 'react-icons/ci'
+import InstallAppPrompt from '@/components/InstallAppPrompt'
+import PaymentReminderOptIn from '@/components/PaymentReminderOptIn'
 
 const display = (value: unknown) => {
   if (value === null || value === undefined) return 'Not provided'
@@ -107,6 +109,7 @@ export default function StudentProfilePage() {
 
   return (
     <main className="min-h-screen bg-luxury-white pb-24 md:pb-0">
+      <InstallAppPrompt />
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-10">
         <div className="grid md:grid-cols-[280px_1fr] gap-6">
           <aside className="hidden md:flex md:flex-col border border-luxury-black/15 rounded-3xl bg-white/70 p-5 h-fit sticky top-6">
@@ -153,6 +156,8 @@ export default function StudentProfilePage() {
                 Manage your profile, billing, and enrollment details from one place.
               </p>
             </div>
+
+            <PaymentReminderOptIn />
 
             {activeSection === 'overview' ? (
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">

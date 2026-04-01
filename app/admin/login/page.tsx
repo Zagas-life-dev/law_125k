@@ -49,6 +49,7 @@ export default function AdminLoginPage() {
         throw new Error(me.reason || 'You are not authorized as an admin.')
       }
 
+      window.sessionStorage.setItem('show-install-prompt-after-login', '1')
       router.push('/admin')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed.')

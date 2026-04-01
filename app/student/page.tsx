@@ -46,6 +46,7 @@ export default function StudentAuthPage() {
           password,
         })
         if (signInError) throw new Error(signInError.message)
+        window.sessionStorage.setItem('show-install-prompt-after-login', '1')
 
         const sessionRes = await supabase.auth.getSession()
         const token = sessionRes.data.session?.access_token
